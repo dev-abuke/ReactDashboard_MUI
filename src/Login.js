@@ -31,7 +31,7 @@ function Copyright(props) {
     return false;
   };
 
-  async function loginUser(data, setLoading, updateError) {
+  async function loginUser(data) {
 
     return fetch('http://localhost:3000/api/user/signIn', {
       method: 'POST',
@@ -40,7 +40,7 @@ function Copyright(props) {
       },
       body: JSON.stringify(data)
     })
-   }
+  }
 
 const theme = createTheme();
 
@@ -96,12 +96,11 @@ export default function SignIn({setToken}) {
       if (response.ok) {
         response.json().then(res => {
         if(res.status){
-          console.log(res.result)
           setToken(res.result)
         }
         })
       } else {
-        updateError("show", "User Does Not Exist!")
+        updateError("show", "Opps Something Went Wrong")
       }
     })
   };

@@ -12,8 +12,6 @@ function App() {
 
   const {token, setToken} = useToken();
 
-  console.log("App tok ", useToken())
-
   if(!token) {
     console.log("no token")
     return <Login setToken={setToken} />
@@ -21,6 +19,7 @@ function App() {
 
   console.log("token available")
   return (
+  //<Dashboard />
   <div>
   <Router>
     <Routes>
