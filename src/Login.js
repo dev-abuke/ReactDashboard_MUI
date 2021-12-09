@@ -45,7 +45,7 @@ function Copyright(props) {
 const theme = createTheme();
 
 export default function SignIn({setToken}) {
-
+  
   const [error, setError] = useState({
     display: "none",
     errorType: ""
@@ -64,7 +64,7 @@ export default function SignIn({setToken}) {
   const handleSubmit = (event) => {
 
     setLoading(true);
-
+    
     event.preventDefault();
     const data = new FormData(event.currentTarget);
     //Todo send the data(username and password) to vehicle api
