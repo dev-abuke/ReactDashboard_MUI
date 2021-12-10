@@ -1,9 +1,9 @@
 import { Box, Container, Grid } from "@mui/material";
 import DashboardCard from "./DashboardCard";
 import Typography from '@mui/material/Typography';
-
+ 
 const Dashboard = () => (
-  <>
+  <div>
     <Box
       component="main"
       sx={{
@@ -11,7 +11,7 @@ const Dashboard = () => (
         py: 2,
       }}
     >
-      <Typography sx={{ fontWeight: 'bold', fontSize: 21, mb: 4, ml: 2 }} component="h1" variant="h5">
+      <Typography sx={{ fontWeight: 'bold', fontSize: 21, mb: 2, ml: 2 }} component="h1" variant="h5">
         DASHBOARD
       </Typography>
       <Container maxWidth={false}>
@@ -31,7 +31,7 @@ const Dashboard = () => (
         </Grid>
       </Container>
       <Container maxWidth={false}>
-        <Grid container spacing={2} sx={{ display: "flex" }}>
+        <Grid container spacing={1} sx={{ display: "flex" }}>
           <Grid item lg={3}>
             <DashboardCard name="Paid - Not Installed - No Reciept" number="21" />
           </Grid>
@@ -57,7 +57,7 @@ const Dashboard = () => (
         </Grid>
       </Container>
     </Box>
-  </>
+  </div>
 );
 
 export default Dashboard;

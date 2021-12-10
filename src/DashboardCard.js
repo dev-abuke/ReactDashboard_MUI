@@ -13,15 +13,15 @@ export default function DashboardCard(props) {
         sx={{
           marginBottom: "1px",
           marginRight: "50px",
-          height: "150px",
+          height: "140px",
         }}
       >
         <Grid container spacing={3} sx={{ justifyContent: "space-between" }}>
           <Grid item>
-            <Typography color="textSecondary" gutterBottom sx={{ fontFamily: "Roboto", fontSize: 11, textTransform: "none" }} variant="overline">
+            <Typography color="textSecondary" gutterBottom sx={{ mt: 1, fontFamily: "Roboto", fontSize: 11, textTransform: "none" }}>
             {props.name}
             </Typography>
-            <Typography color="#f53e31" fontSize="12" fontWeight="bold" variant="h4">
+            <Typography color="#f53e31" fontSize="12" fontWeight="Bold" variant="h4">
             {props.number}
             </Typography>
           </Grid>

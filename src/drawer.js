@@ -30,10 +30,11 @@ function ResponsiveDrawer(props) {
     <div>
       <Toolbar
         sx={{
+          margin: "auto",
           borderRadius: "5%",
+          alignContent: "center",
           marginTop: "50px",
-          width: "200px",
-          hight: "100px",
+          width: "185px",
           backgroundColor: "#615f5f",
         }}
       >
@@ -43,12 +44,12 @@ function ResponsiveDrawer(props) {
             marginTop: "30px",
             margin: "10px",
             width: "200px",
-            hight: "100px",
             backgroundColor: "#615f5f",
           }}
         >
           <h3
             style={{
+              textAlign: "center",
               marginTop: "1px",
               marginBottom: "1px",
               backgroundColor: "#615f5f",
@@ -59,6 +60,7 @@ function ResponsiveDrawer(props) {
           <h4
             style={{
               marginTop: "1px",
+              textAlign: "center",
               marginBottom: "1px",
               backgroundColor: "#615f5f",
               color: "#2b2a2a",
@@ -77,8 +79,10 @@ function ResponsiveDrawer(props) {
               key={text}
               sx={{
                 "&:hover": {
-                  backgroundColor: "#c75252",
+                  backgroundColor: "#f53e31",
                 },
+                margin: "auto",
+                width: "185px",
                 borderRadius: "5%",
               }}
             >
