@@ -33,7 +33,7 @@ function Copyright(props) {
 
   async function loginUser(data) {
 
-    return fetch('http://localhost:3000/api/user/signIn', {
+    return fetch('http://localhost:3001/api/user/signIn', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'

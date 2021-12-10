@@ -1,18 +1,13 @@
 import * as React from "react";
-import PropTypes from "prop-types";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
 import CssBaseline from "@mui/material/CssBaseline";
 import Divider from "@mui/material/Divider";
 import Drawer from "@mui/material/Drawer";
-import IconButton from "@mui/material/IconButton";
-import InboxIcon from "@mui/icons-material/MoveToInbox";
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
-import MailIcon from "@mui/icons-material/Mail";
-import MenuIcon from "@mui/icons-material/Menu";
 import Toolbar from "@mui/material/Toolbar";
 import DashboardIcon from "@mui/icons-material/Dashboard";
 import DirectionsCarIcon from "@mui/icons-material/DirectionsCar";
@@ -37,8 +32,6 @@ function ResponsiveDrawer(props) {
         sx={{
           borderRadius: "5%",
           marginTop: "50px",
-          // margin: "50px",
-
           width: "200px",
           hight: "100px",
           backgroundColor: "#615f5f",
@@ -58,7 +51,6 @@ function ResponsiveDrawer(props) {
             style={{
               marginTop: "1px",
               marginBottom: "1px",
-
               backgroundColor: "#615f5f",
             }}
           >
@@ -69,7 +61,6 @@ function ResponsiveDrawer(props) {
               marginTop: "1px",
               marginBottom: "1px",
               backgroundColor: "#615f5f",
-
               color: "#2b2a2a",
             }}
           >

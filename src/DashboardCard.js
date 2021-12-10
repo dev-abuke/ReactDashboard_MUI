@@ -8,17 +8,17 @@ import {
 export default function DashboardCard(props) {
 
   return (
-    <Card sx={{ height: "75%", minWidth: 200 }} {...props}>
+    <Card sx={{ height: "75%" }} {...props}>
       <CardContent
         sx={{
           marginBottom: "1px",
-          marginRight: "25px",
+          marginRight: "50px",
           height: "150px",
         }}
       >
         <Grid container spacing={3} sx={{ justifyContent: "space-between" }}>
           <Grid item>
-            <Typography color="textSecondary" gutterBottom variant="overline">
+            <Typography color="textSecondary" gutterBottom sx={{ fontFamily: "Roboto", fontSize: 11, textTransform: "none" }} variant="overline">
             {props.name}
             </Typography>
             <Typography color="#f53e31" fontSize="12" fontWeight="bold" variant="h4">
