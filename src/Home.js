@@ -7,7 +7,7 @@ import TableCell from '@mui/material/TableCell';
 import TableContainer from '@mui/material/TableContainer';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
-import Dashboard from "./Dash.js";
+import Dashboard from "./DashboardContainer.js";
 import CardBar from "./DashboardHeader/Card"
 
 function Home(props) {
@@ -21,7 +21,7 @@ function Home(props) {
             <TableRow>
               <CardBar />
 
-              <TableRow>
+              <TableRow sx={{display: "flex"}}>
                 <ResponsiveDrawer />
                 <Dashboard />
               </TableRow>

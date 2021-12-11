@@ -3,20 +3,38 @@ import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
-import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
-import MenuIcon from '@mui/icons-material/Menu';
+import NotificationsIcon from '@mui/icons-material/Notifications';
+import MoreVertIcon from '@mui/icons-material/MoreVert';
 
 export default function CardBar(props) {
 
     return (
-        <Box sx={{ flexGrow: 1}}>
+        <Box sx={{ ml: 25, flexGrow: 1 }}>
         <AppBar position="static">
-          <Toolbar>
+          <Toolbar >
             <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
               Pepo Speed Limit
             </Typography>
-            <Button color="inherit">Login</Button>
+            <IconButton
+                size="medium"
+                aria-label="account of current user"
+                aria-controls="menu-appbar"
+                aria-haspopup="true"
+                color="inherit"
+              >
+                <NotificationsIcon />
+              </IconButton>
+              
+            <IconButton
+                size="medium"
+                aria-label="account of current user"
+                aria-controls="menu-appbar"
+                aria-haspopup="true"
+                color="inherit"
+              >
+                <MoreVertIcon />
+              </IconButton>
           </Toolbar>
         </AppBar>
       </Box>
