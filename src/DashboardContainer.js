@@ -1,7 +1,9 @@
 import { Box, Container, Grid } from "@mui/material";
 import DashboardCard from "./DashboardCard";
 import Typography from '@mui/material/Typography';
- 
+import PieChart from './PieChart';
+import LineGraph from './LineGraph';
+
 const Dashboard = () => (
   <div>
     <Box
@@ -17,10 +19,10 @@ const Dashboard = () => (
       <Container maxWidth={false}>
         <Grid container spacing={2} sx={{ display: "flex" }}>
           <Grid item lg={2}>
-            <DashboardCard name="Total" number="257"/>
+            <DashboardCard name="Total" number="257" />
           </Grid>
           <Grid item xl={3}>
-            <DashboardCard  name="Paid - Installed - Reciept Issued" number="23"/>
+            <DashboardCard name="Paid - Installed - Reciept Issued" number="23" />
           </Grid>
           <Grid item xl={3}>
             <DashboardCard name="Paid - Installed - No Reciept" number="32" />
@@ -36,7 +38,7 @@ const Dashboard = () => (
             <DashboardCard name="Paid - Not Installed - No Reciept" number="21" />
           </Grid>
           <Grid item xl={3}>
-            <DashboardCard  name="Not Paid - Installed - No Reciept" number="6"/>
+            <DashboardCard name="Not Paid - Installed - No Reciept" number="6" />
           </Grid>
           <Grid item xl={3}>
             <DashboardCard name="Not Paid - Installed - Reciept" number="8" />
@@ -46,13 +48,15 @@ const Dashboard = () => (
           </Grid>
         </Grid>
       </Container>
-      <Container maxWidth={false}>
-        <Grid container spacing={3} sx={{ display: "flex" }}>
-          <Grid item lg={6}>
-            {/* <GraphChart /> */}
+      <Container maxWidth={true} >
+        <Grid container spacing={3} >
+          <Grid item lg={7.7} >
+            <LineGraph />
           </Grid>
-          <Grid item lg={6}>
-            {/* <BarChart /> */}
+          <Grid item lg={4}>
+
+            <PieChart />
+
           </Grid>
         </Grid>
       </Container>

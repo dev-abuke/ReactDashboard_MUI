@@ -1,6 +1,7 @@
 import './App.css';
 import Login from './Login';
 import Home from "./Home";
+import User from "./Users/ManageUsers";
 import {
   BrowserRouter as Router,
   Routes,
@@ -20,13 +21,14 @@ function App() {
   console.log("token available")
   return (
   //<Dashboard />
-  <div>
+  
   <Router>
     <Routes>
-      <Route path="/home" element={<Home />} />
+    <Route path="/home" element={<Home />} />
+    <Route path="/users" element={<User />} />
     </Routes>
   </Router>
-  </div>
+  
   );
 }
 

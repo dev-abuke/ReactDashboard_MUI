@@ -15,6 +15,7 @@ import PersonIcon from "@mui/icons-material/Person";
 import GroupIcon from "@mui/icons-material/Group";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import EventNoteIcon from "@mui/icons-material/EventNote";
+import { Link as RouterLink } from 'react-router-dom';
 
 const drawerWidth = 200;
 
@@ -75,6 +76,8 @@ function ResponsiveDrawer(props) {
         {["DASHBOARD", "VEHICLES", "USER", "TEAM", "ROLES", "REPORT"].map(
           (text, index) => (
             <ListItem
+              component={RouterLink}
+              to="/users"
               button
               key={text}
               sx={{
@@ -85,7 +88,7 @@ function ResponsiveDrawer(props) {
                 width: "185px",
                 borderRadius: "5%",
               }}
-            >
+             >
               <ListItemIcon>
                 {index === 0 ? (
                   <DashboardIcon
@@ -130,7 +133,9 @@ function ResponsiveDrawer(props) {
                   />
                 ) : null}
               </ListItemIcon>
-              <ListItemText>{text}</ListItemText>
+              <ListItemText >
+                {text}
+              </ListItemText>
             </ListItem>
           )
         )}

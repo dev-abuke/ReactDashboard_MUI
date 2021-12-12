@@ -3,10 +3,8 @@ import React from "react";
 import ResponsiveDrawer from "./drawer";
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
 import TableContainer from '@mui/material/TableContainer';
 import TableRow from '@mui/material/TableRow';
-import Paper from '@mui/material/Paper';
 import Dashboard from "./DashboardContainer.js";
 import CardBar from "./DashboardHeader/Card"
 
@@ -20,7 +18,7 @@ function Home(props) {
 
             <TableRow>
               <CardBar />
-
+              
               <TableRow sx={{display: "flex"}}>
                 <ResponsiveDrawer />
                 <Dashboard />
