@@ -10,7 +10,7 @@ import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import UserCreationFeilds from './UserCreationFeilds'
 
-export default function UserCreationDialog({dialogueOpened, setOpen, onSubmit}) {
+export default function UserCreationDialog({dialogueOpened, setOpen, onSubmit, loading}) {
 
   const handleClose = () => {
     setOpen(false);
@@ -33,7 +33,7 @@ export default function UserCreationDialog({dialogueOpened, setOpen, onSubmit}) 
         <DialogContent>
           <DialogContentText>
           {/* contains all the feilds needed to create user */}
-            <UserCreationFeilds onSubmit={onSubmit} />
+            <UserCreationFeilds loading={loading}onSubmit={onSubmit} />
           </DialogContentText>
         </DialogContent>
       </Dialog>

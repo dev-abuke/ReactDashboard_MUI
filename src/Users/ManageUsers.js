@@ -72,8 +72,9 @@ function applySortFilter(array, comparator, query) {
   return stabilizedThis.map((el) => el[0]);
 }
 
-export default function User() {
+export default function User({token}) {
 
+  const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(0);
   const [dialogueOpened, setOpenDialogue] = useState(false);
   const [order, setOrder] = useState('asc');
@@ -143,9 +144,9 @@ export default function User() {
 
   const handleCreateUserButtonClick = (event) => {
     event.preventDefault();
+    setLoading(true)
 
     const data = new FormData(event.target);
-    console.log(event.target) 
 
     const username = data.get("username");
     const fullname = data.get("fullname");
@@ -154,12 +155,43 @@ export default function User() {
     const role = data.get("role");
     const team = data.get("team");
 
-    console.log("User Name ", username)
-    console.log("Full Name", fullname)
-    console.log("Password ", password)
-    console.log("Confirm Password ", confirmPass)
-    console.log("Role ", role)
-    console.log("Team ", team)
+    const passMatch = (password === confirmPass)
+
+    if(!passMatch){
+      setLoading(false)
+      console.log("No Match")
+      return;
+    }
+    const userData = {
+      fullName: fullname,
+      userName: username,
+      password: password,
+      role: role,
+      team: team,
+    }
+
+    const config = {
+      headers: {
+      'Content-Type': 'application/json',
+      'authorization': token
+      }
+    }
+
+    Axios.post(
+    "http://localhost:3001/api/user", 
+    userData, 
+    config
+    ).then(function (response) {
+      setLoading(false)
+      setOpenDialogue(false)
+      console.log(response);
+    }).catch(function (error) {
+      setLoading(false)
+      console.log(error);
+    }).then(function (response) {
+      // always executed
+      console.log("respo ", response);
+    });
   }
 
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - USERLIST.length) : 0;
@@ -171,7 +203,7 @@ export default function User() {
   return ( 
     // <Page title="User | Minimal-UI">
       <Container sx={{mt: 6 }}>
-      <UserCreationDialog onSubmit={handleCreateUserButtonClick} dialogueOpened={dialogueOpened} setOpen={setOpenDialogue} />
+      <UserCreationDialog loading={loading} onSubmit={handleCreateUserButtonClick} dialogueOpened={dialogueOpened} setOpen={setOpenDialogue} />
         <Stack direction="row" alignItems="center" justifyContent="space-between" mb={3}>
           <Typography sx={{fontWeight: "bold"}} variant="h5" gutterBottom>
             MANAGE USERS

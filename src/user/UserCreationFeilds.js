@@ -22,9 +22,7 @@ const currencies = [
     },
 ];
 
-export default function UserCreationFeilds({onSubmit}) {
-
-    const [loading, setLoading] = useState(false);
+export default function UserCreationFeilds({onSubmit, loading}) {
 
     return (
         <Box
@@ -44,7 +42,7 @@ export default function UserCreationFeilds({onSubmit}) {
                     <TextField fullWidth id="password" name="password" type="password" label="Password" variant="outlined" />
                 </Grid>
                 <Grid item xs={6}>
-                    <TextField fullWidth id="confirmPassword" type="password" name="confirm" label="Comfirm Password" variant="outlined" />
+                    <TextField fullWidth id="confirmPassword" type="password" name="confirm" label="Confirm Password" variant="outlined" />
                 </Grid>
                 <Grid item xs={6}>
                     <TextField fullWidth id="role" name="role" label="Role" variant="outlined" />

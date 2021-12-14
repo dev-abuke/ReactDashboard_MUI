@@ -25,7 +25,7 @@ function App() {
   <Router>
     <Routes>
     <Route path="/home" element={<Home />} />
-    <Route path="/users" element={<User />} />
+    <Route path="/users" element={<User token={token}/>} />
     </Routes>
   </Router>
   

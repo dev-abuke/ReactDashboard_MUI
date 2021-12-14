@@ -108,7 +108,7 @@ export default function SignIn({setToken}) {
   return (
     <ThemeProvider theme={theme}>
       <Container component="main" maxWidth="xs">
-      <Card sx={{mt: 5, boxShadow: 5 }}>
+      <Card sx={{ mt: 8, boxShadow: 5, pb: 5, pt: 3 }}>
         <CssBaseline />
         <Box
           sx={{
@@ -157,7 +157,7 @@ export default function SignIn({setToken}) {
         </Box>
         <Copyright sx={{ mt: 3, mb: 4 }} />
         
-        <Typography sx={{fontSize: 12, mb: 5 }} color="text.secondary" align="center" >
+        <Typography sx={{fontSize: 12}} color="text.secondary" align="center" >
         Version 0.3.0 Prototype Build
         </Typography>
       </Card>
