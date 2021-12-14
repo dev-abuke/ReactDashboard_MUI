@@ -1,5 +1,5 @@
 import { filter } from 'lodash';
-//import { sentenceCase } from 'change-case';
+import Axios from 'axios';
 import { useState } from 'react';
 import AddIcon from '@mui/icons-material/Add';
 import { Link as RouterLink } from 'react-router-dom';
@@ -24,6 +24,7 @@ import Page from '../Page';
 import Label from '../Label';
 import Scrollbar from '../Scrollbar';
 import SearchNotFound from '../SearchNotFound';
+import UserCreationDialog from '../user/UserCreationDialogue';
 import { UserListHead, UserListToolbar, UserMoreMenu } from '../user';
 
 import USERLIST from '../mock/user';
@@ -74,6 +75,7 @@ function applySortFilter(array, comparator, query) {
 export default function User() {
 
   const [page, setPage] = useState(0);
+  const [dialogueOpened, setOpenDialogue] = useState(false);
   const [order, setOrder] = useState('asc');
   const [selected, setSelected] = useState([]);
   const [orderBy, setOrderBy] = useState('name');
@@ -135,6 +137,31 @@ export default function User() {
       return 'info'
   };
 
+  const showCreateUserDialogue = () => {
+    setOpenDialogue(true);
+  }
+
+  const handleCreateUserButtonClick = (event) => {
+    event.preventDefault();
+
+    const data = new FormData(event.target);
+    console.log(event.target) 
+
+    const username = data.get("username");
+    const fullname = data.get("fullname");
+    const password = data.get("password");
+    const confirmPass = data.get("confirm");
+    const role = data.get("role");
+    const team = data.get("team");
+
+    console.log("User Name ", username)
+    console.log("Full Name", fullname)
+    console.log("Password ", password)
+    console.log("Confirm Password ", confirmPass)
+    console.log("Role ", role)
+    console.log("Team ", team)
+  }
+
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - USERLIST.length) : 0;
 
   const filteredUsers = applySortFilter(USERLIST, getComparator(order, orderBy), filterName);
@@ -144,22 +171,22 @@ export default function User() {
   return ( 
     // <Page title="User | Minimal-UI">
       <Container sx={{mt: 6 }}>
+      <UserCreationDialog onSubmit={handleCreateUserButtonClick} dialogueOpened={dialogueOpened} setOpen={setOpenDialogue} />
         <Stack direction="row" alignItems="center" justifyContent="space-between" mb={3}>
           <Typography sx={{fontWeight: "bold"}} variant="h5" gutterBottom>
             MANAGE USERS
           </Typography>
           <Button
-            sx={{ backgroundColor: "#f53e31" }}
+            onClick={showCreateUserDialogue}
+            sx={{ '&:hover':  {backgroundColor: "#E53e31"}, backgroundColor: "#f53e31" }}
             variant="contained"
-            component={ RouterLink }
-            to="/home"
             startIcon={<AddIcon />}
           >
             Create User
           </Button>
         </Stack>
 
-        <Card sx={{ mb: 5, boxShadow: 4 }}>
+        <Card sx={{ mb: 5, boxShadow: 4, borderRadius: 5 }}>
           <UserListToolbar
             numSelected={selected.length}
             filterName={filterName}
@@ -239,8 +266,8 @@ export default function User() {
                         </TableRow>
                       );
 
-                    })}
-
+                    })
+                  }
                   {emptyRows > 0 && (
                     <TableRow style={{ height: 53 * emptyRows }}>
                       <TableCell colSpan={6} />
