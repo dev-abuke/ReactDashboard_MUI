@@ -10,6 +10,7 @@ import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import Container from '@mui/material/Container';
 import Alert from '@mui/material/Alert';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
+import Axios from 'axios'
 
 function Copyright(props) {
     return (
@@ -33,13 +34,13 @@ function Copyright(props) {
 
   async function loginUser(data) {
 
-    return fetch('http://localhost:3001/api/user/signIn', {
-      method: 'POST',
+    const config = {
       headers: {
         'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(data)
-    })
+      }
+    }
+
+    return Axios.post('http://localhost:3001/api/user/signIn', data, config)
   }
 
 const theme = createTheme();
@@ -92,16 +93,20 @@ export default function SignIn({setToken}) {
       password: password
     })
     .then(response => {
+      console.log("Login Respo",response)
       setLoading(false)
-      if (response.ok) {
-        response.json().then(res => {
-        if(res.status){
-          setToken(res.result)
-        }
-        })
+      if (response.data.status) {
+        
+      console.log("Status Res",response.data.status)
+      console.log("Result Res",response.result)
+        setToken(response.data.result)
       } else {
-        updateError("show", "Opps Something Went Wrong")
+      console.log("Error Respo",response.data.error)
+        updateError("show", response.error)
       }
+    }).catch(function (error) {
+      setLoading(false)
+      console.log(error);
     })
   };
 

@@ -38,7 +38,7 @@ const TABLE_HEAD = [
   { id: 'team', label: 'Team', alignRight: false },
   { id: 'createdby', label: 'Created By', alignRight: false },
   { id: 'status', label: 'Status', alignRight: false },
-  { id: '' },
+  { id: 'setting', label: 'Settings', alignRight: true },
 ];
 
 // ----------------------------------------------------------------------

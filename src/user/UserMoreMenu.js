@@ -1,7 +1,7 @@
 import { useRef, useState } from 'react';
 import EditIcon from '@mui/icons-material/Edit';
 import { Link as RouterLink } from 'react-router-dom';
-import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
+import BlockIcon from '@mui/icons-material/Block';
 import SettingsIcon from '@mui/icons-material/Settings';
 // material
 import { Menu, MenuItem, IconButton, ListItemIcon, ListItemText } from '@mui/material';
@@ -30,9 +30,9 @@ export default function UserMoreMenu() {
       >
         <MenuItem sx={{ color: 'text.secondary' }}>
           <ListItemIcon>
-            <DeleteOutlineOutlinedIcon width={24} height={24} />
+            <BlockIcon width={24} height={24} />
           </ListItemIcon>
-          <ListItemText primary="Delete" primaryTypographyProps={{ variant: 'body2' }} />
+          <ListItemText primary="Deactivate" primaryTypographyProps={{ variant: 'body2' }} />
         </MenuItem>
 
         <MenuItem component={RouterLink} to="#" sx={{ color: 'text.secondary' }}>
