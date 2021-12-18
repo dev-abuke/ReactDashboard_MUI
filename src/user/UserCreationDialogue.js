@@ -9,32 +9,34 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import UserCreationFeilds from './UserCreationFeilds'
+import UserSetting from './UserSetting'
+import Alert from '@mui/material/Alert';
 
-export default function UserCreationDialog({dialogueOpened, setOpen, onSubmit, loading}) {
-
+export default function UserCreationDialog({dialogueOpened, alert, setOpen, onSubmit, loading}) {
+  
   const handleClose = () => {
     setOpen(false);
   };
 
   return (
     <div>
-      <Dialog open={dialogueOpened} onClose={handleClose} maxWidth="md" >
+      <Dialog open={dialogueOpened} onClose={handleClose} maxWidth="lg" >
         <DialogTitle >
         <Stack direction="row" alignItems="center" justifyContent="space-between" mb={1/5}>
         <Typography fontSize="18px" variant="button">
           CREATE USER
         </Typography>
+        <Alert severity="error" sx={{ mt: 2, display: alert.display }}>{alert.errorMessage}</Alert>
         <IconButton size="large" aria-label="close" onClick={handleClose}>
         <CloseIcon fontSize="inherit" color="error" />
         </IconButton>
         </Stack>
         </DialogTitle>
         <Divider variant="middle"/>
-        <DialogContent>
-          <DialogContentText>
+        <DialogContent sx={{p: 0}} justifyContent="center">
           {/* contains all the feilds needed to create user */}
-            <UserCreationFeilds loading={loading}onSubmit={onSubmit} />
-          </DialogContentText>
+          <UserSetting />
+            {/* <UserCreationFeilds loading={loading} onSubmit={onSubmit} /> */}
         </DialogContent>
       </Dialog>
     </div>

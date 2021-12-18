@@ -26,10 +26,12 @@ import Scrollbar from '../Scrollbar';
 import SearchNotFound from '../SearchNotFound';
 import UserCreationDialog from '../user/UserCreationDialogue';
 import { UserListHead, UserListToolbar, UserMoreMenu } from '../user';
-
+import ValidationRules from '../helper/DataValidators'
+import DataRequester from '../helper/DataRequester'
 import USERLIST from '../mock/user';
 
-// ----------------------------------------------------------------------
+const { checkEmptyAndUndefined, checkFieldMatch, getDataFromForm } = ValidationRules()
+const { sendCreateUserReq } = DataRequester()
 
 const TABLE_HEAD = [
   { id: 'fullname', label: 'Full Name', alignRight: false },
@@ -40,8 +42,6 @@ const TABLE_HEAD = [
   { id: 'status', label: 'Status', alignRight: false },
   { id: 'setting', label: 'Settings', alignRight: true },
 ];
-
-// ----------------------------------------------------------------------
 
 function descendingComparator(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
@@ -72,8 +72,12 @@ function applySortFilter(array, comparator, query) {
   return stabilizedThis.map((el) => el[0]);
 }
 
-export default function User({token}) {
+export default function User({ token }) {
 
+  const [alert, setAlert] = useState({
+    display: "none",
+    errorMessage: ""
+  });
   const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(0);
   const [dialogueOpened, setOpenDialogue] = useState(false);
@@ -130,11 +134,11 @@ export default function User({token}) {
   };
 
   const changeStatusColor = (status) => {
-    if(status === "Banned")
+    if (status === "Banned")
       return "error"
-    else if(status === "Active")
+    else if (status === "Active")
       return 'success'
-    else if(status === "Pending")
+    else if (status === "Pending")
       return 'info'
   };
 
@@ -144,54 +148,54 @@ export default function User({token}) {
 
   const handleCreateUserButtonClick = (event) => {
     event.preventDefault();
+
+    const userData = getDataFromForm(event.target)
+
+    const { fullName, userName, password, confirmPass } = userData
+
+    console.log("UserData : ", userData)
+
+    if (checkEmptyAndUndefined(fullName)) {
+
+      setAlert({ display: "show", errorMessage: "Fullname Can Not Be Empty!" })
+      return
+    }
+
+    if (checkEmptyAndUndefined(userName)) {
+
+      setAlert({ display: "show", errorMessage: "Username Can Not Be Empty!" })
+      return
+    }
+    if (checkEmptyAndUndefined(password)) {
+
+      setAlert({ display: "show", errorMessage: "You Must Provide Password" })
+      return
+    }
+    if (checkEmptyAndUndefined(confirmPass)) {
+
+      setAlert({ display: "show", errorMessage: "You Must Confirm Password" })
+      return
+    }
+    if (!checkFieldMatch(password, confirmPass)) {
+
+      setAlert({ display: "show", errorMessage: "Passwords Don't Match" })
+      return
+    }
+
     setLoading(true)
+    setAlert({ display: "none" })
 
-    const data = new FormData(event.target);
-
-    const username = data.get("username");
-    const fullname = data.get("fullname");
-    const password = data.get("password");
-    const confirmPass = data.get("confirm");
-    const role = data.get("role");
-    const team = data.get("team");
-
-    const passMatch = (password === confirmPass)
-
-    if(!passMatch){
-      setLoading(false)
-      console.log("No Match")
-      return;
-    }
-    const userData = {
-      fullName: fullname,
-      userName: username,
-      password: password,
-      role: role,
-      team: team,
-    }
-
-    const config = {
-      headers: {
-      'Content-Type': 'application/json',
-      'authorization': token
-      }
-    }
-
-    Axios.post(
-    "http://localhost:3001/api/user", 
-    userData, 
-    config
-    ).then(function (response) {
-      setLoading(false)
-      setOpenDialogue(false)
-      console.log(response);
-    }).catch(function (error) {
-      setLoading(false)
-      console.log(error);
-    }).then(function (response) {
-      // always executed
-      console.log("respo ", response);
-    });
+    sendCreateUserReq('/user', userData).then(function (response) {
+        setLoading(false)
+        setOpenDialogue(false)
+        console.log(response)
+      }).catch(function (error) {
+        setLoading(false)
+        setAlert({
+          display: "show",
+          errorMessage: error.response.data.error
+        })
+      })
   }
 
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - USERLIST.length) : 0;
@@ -200,136 +204,144 @@ export default function User({token}) {
 
   const isUserNotFound = filteredUsers.length === 0;
 
-  return ( 
+  return (
     // <Page title="User | Minimal-UI">
-      <Container sx={{mt: 6 }}>
-      <UserCreationDialog loading={loading} onSubmit={handleCreateUserButtonClick} dialogueOpened={dialogueOpened} setOpen={setOpenDialogue} />
-        <Stack direction="row" alignItems="center" justifyContent="space-between" mb={3}>
-          <Typography sx={{fontWeight: "bold"}} variant="h5" gutterBottom>
-            MANAGE USERS
-          </Typography>
-          <Button
-            onClick={showCreateUserDialogue}
-            sx={{ '&:hover':  {backgroundColor: "#E53e31"}, backgroundColor: "#f53e31" }}
-            variant="contained"
-            startIcon={<AddIcon />}
-          >
-            Create User
-          </Button>
-        </Stack>
+    <Container sx={{ mt: 6 }}>
 
-        <Card sx={{ mb: 5, boxShadow: 4, borderRadius: 5 }}>
-          <UserListToolbar
-            numSelected={selected.length}
-            filterName={filterName}
-            onFilterName={handleFilterByName}
-          />
+      <UserCreationDialog
+        alert={alert}
+        loading={loading}
+        onSubmit={handleCreateUserButtonClick}
+        dialogueOpened={dialogueOpened}
+        setOpen={setOpenDialogue}
+      />
 
-          {/* <Scrollbar> */}
-            <TableContainer sx={{ minWidth: 800 }}>
-              <Table>
-                <UserListHead
-                  order={order}
-                  orderBy={orderBy}
-                  headLabel={TABLE_HEAD}
-                  rowCount={USERLIST.length}
-                  numSelected={selected.length}
-                  onRequestSort={handleRequestSort}
-                  onSelectAllClick={handleSelectAllClick}
-                />
-                <TableBody>
-                  {filteredUsers
-                    .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                    .map((row) => {
-                      const { id, name, username, role, team, createdBy, status, avatarUrl } = row;
-                      const isItemSelected = selected.indexOf(name) !== -1;
+      <Stack direction="row" alignItems="center" justifyContent="space-between" mb={3}>
+        <Typography sx={{ fontWeight: "bold" }} variant="h5" gutterBottom>
+          MANAGE USERS
+        </Typography>
+        <Button
+          onClick={showCreateUserDialogue}
+          sx={{ '&:hover': { backgroundColor: "#E53e31" }, backgroundColor: "#f53e31" }}
+          variant="contained"
+          startIcon={<AddIcon />}
+        >
+          Create User
+        </Button>
+      </Stack>
 
-                      return (
-                        <TableRow
-                          hover
-                          key={id}
-                          tabIndex={-1}
-                          role="checkbox"
-                          selected={isItemSelected}
-                          aria-checked={isItemSelected}
+      <Card sx={{ mb: 5, boxShadow: 4, borderRadius: 5 }}>
+        <UserListToolbar
+          numSelected={selected.length}
+          filterName={filterName}
+          onFilterName={handleFilterByName}
+        />
+
+        {/* <Scrollbar> */}
+        <TableContainer sx={{ minWidth: 800 }}>
+          <Table>
+            <UserListHead
+              order={order}
+              orderBy={orderBy}
+              headLabel={TABLE_HEAD}
+              rowCount={USERLIST.length}
+              numSelected={selected.length}
+              onRequestSort={handleRequestSort}
+              onSelectAllClick={handleSelectAllClick}
+            />
+            <TableBody>
+              {filteredUsers
+                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                .map((row) => {
+                  const { id, name, username, role, team, createdBy, status, avatarUrl } = row;
+                  const isItemSelected = selected.indexOf(name) !== -1;
+
+                  return (
+                    <TableRow
+                      hover
+                      key={id}
+                      tabIndex={-1}
+                      role="checkbox"
+                      selected={isItemSelected}
+                      aria-checked={isItemSelected}
+                    >
+                      <TableCell padding="checkbox">
+                        <Checkbox
+                          checked={isItemSelected}
+                          onChange={(event) => handleClick(event, name)}
+                        />
+                      </TableCell>
+                      <TableCell component="th" scope="row" padding="none">
+                        <Stack direction="row" alignItems="center" spacing={2}>
+                          <Avatar
+                            alt={name} src={avatarUrl}
+                          />
+                          <Typography variant="subtitle2" noWrap>
+
+                            {name}
+
+                          </Typography>
+                        </Stack>
+                      </TableCell>
+                      <TableCell align="left">
+                        {username}
+                      </TableCell>
+                      <TableCell align="left">
+                        {role}
+                      </TableCell>
+                      <TableCell align="left">
+                        {team}
+                      </TableCell>
+                      <TableCell align="left">
+                        {createdBy}
+                      </TableCell>
+                      <TableCell align="left">
+                        <Label
+                          variant="ghost"
+                          color={changeStatusColor(status)}
                         >
-                          <TableCell padding="checkbox">
-                            <Checkbox
-                              checked={isItemSelected}
-                              onChange={(event) => handleClick(event, name)}
-                            />
-                          </TableCell>
-                          <TableCell component="th" scope="row" padding="none">
-                            <Stack direction="row" alignItems="center" spacing={2}>
-                              <Avatar  
-                              alt={name} src={avatarUrl}
-                              />
-                              <Typography variant="subtitle2" noWrap>
+                          {status}
+                        </Label>
+                      </TableCell>
 
-                                {name}
-
-                              </Typography>
-                            </Stack>
-                          </TableCell>
-                          <TableCell align="left">
-                          {username}
-                          </TableCell>
-                          <TableCell align="left">
-                          {role}
-                          </TableCell>
-                          <TableCell align="left">
-                          {team}
-                          </TableCell>
-                          <TableCell align="left">
-                          {createdBy}
-                          </TableCell>
-                          <TableCell align="left">
-                            <Label
-                              variant="ghost"
-                              color={changeStatusColor(status)}
-                            >
-                              {status}
-                            </Label>
-                          </TableCell>
-
-                          <TableCell align="right">
-                            <UserMoreMenu />
-                          </TableCell>
-                        </TableRow>
-                      );
-
-                    })
-                  }
-                  {emptyRows > 0 && (
-                    <TableRow style={{ height: 53 * emptyRows }}>
-                      <TableCell colSpan={6} />
-                    </TableRow>
-                  )}
-                </TableBody>
-                {isUserNotFound && (
-                  <TableBody>
-                    <TableRow>
-                      <TableCell align="center" colSpan={6} sx={{ py: 3 }}>
-                        <SearchNotFound searchQuery={filterName} />
+                      <TableCell align="right">
+                        <UserMoreMenu />
                       </TableCell>
                     </TableRow>
-                  </TableBody>
-                )}
-              </Table>
-            </TableContainer>
-          {/* </Scrollbar> */}
+                  );
 
-          <TablePagination
-            rowsPerPageOptions={[5, 10, 25]}
-            component="div"
-            count={USERLIST.length}
-            rowsPerPage={rowsPerPage}
-            page={page}
-            onPageChange={handleChangePage}
-            onRowsPerPageChange={handleChangeRowsPerPage}
-          />
-        </Card>
-      </Container>
+                })
+              }
+              {emptyRows > 0 && (
+                <TableRow style={{ height: 53 * emptyRows }}>
+                  <TableCell colSpan={6} />
+                </TableRow>
+              )}
+            </TableBody>
+            {isUserNotFound && (
+              <TableBody>
+                <TableRow>
+                  <TableCell align="center" colSpan={6} sx={{ py: 3 }}>
+                    <SearchNotFound searchQuery={filterName} />
+                  </TableCell>
+                </TableRow>
+              </TableBody>
+            )}
+          </Table>
+        </TableContainer>
+        {/* </Scrollbar> */}
+
+        <TablePagination
+          rowsPerPageOptions={[5, 10, 25]}
+          component="div"
+          count={USERLIST.length}
+          rowsPerPage={rowsPerPage}
+          page={page}
+          onPageChange={handleChangePage}
+          onRowsPerPageChange={handleChangeRowsPerPage}
+        />
+      </Card>
+    </Container>
     // </Page>
   );
 }
