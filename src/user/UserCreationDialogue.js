@@ -12,7 +12,7 @@ import UserCreationFeilds from './UserCreationFeilds'
 import UserSetting from './UserSetting'
 import Alert from '@mui/material/Alert';
 
-export default function UserCreationDialog({dialogueOpened, alert, setOpen, onSubmit, loading}) {
+export default function CustomDialog({dialogueOpened, alert, setOpen, onSubmit, loading}) {
   
   const handleClose = () => {
     setOpen(false);
@@ -35,8 +35,7 @@ export default function UserCreationDialog({dialogueOpened, alert, setOpen, onSu
         <Divider variant="middle"/>
         <DialogContent sx={{p: 0}} justifyContent="center">
           {/* contains all the feilds needed to create user */}
-          <UserSetting />
-            {/* <UserCreationFeilds loading={loading} onSubmit={onSubmit} /> */}
+            <UserCreationFeilds loading={loading} onSubmit={onSubmit} />
         </DialogContent>
       </Dialog>
     </div>

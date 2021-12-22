@@ -23,7 +23,7 @@ export default function DataRequester() {
     }
 
     const sendGetUsersReq = (relativeUrl) => {
-
+        
         return Get(relativeUrl)
 
     }

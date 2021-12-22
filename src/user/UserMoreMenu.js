@@ -12,13 +12,17 @@ export default function UserMoreMenu() {
   const ref = useRef(null);
   const [isOpen, setIsOpen] = useState(false);
 
+  const handleSettingClick = () => {
+    setIsOpen(true)
+  }
+
   return (
     <>
-      <IconButton ref={ref} onClick={() => setIsOpen(true)}>
+      <IconButton ref={ref} onClick={handleSettingClick}>
         <SettingsIcon width={20} height={20} />
       </IconButton>
 
-      <Menu
+      {/* <Menu
         open={isOpen}
         anchorEl={ref.current}
         onClose={() => setIsOpen(false)}
@@ -41,7 +45,7 @@ export default function UserMoreMenu() {
           </ListItemIcon>
           <ListItemText primary="Edit" primaryTypographyProps={{ variant: 'body2' }} />
         </MenuItem>
-      </Menu>
+      </Menu> */}
     </>
   );
 }

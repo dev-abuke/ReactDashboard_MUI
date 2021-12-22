@@ -24,15 +24,16 @@ import Page from '../Page';
 import Label from '../Label';
 import Scrollbar from '../Scrollbar';
 import SearchNotFound from '../SearchNotFound';
-import UserCreationDialog from '../user/UserCreationDialogue';
+import Dialog from '../user/UserCreationDialogue';
 import { UserListHead, UserListToolbar, UserMoreMenu } from '../user';
 import ValidationRules from '../helper/DataValidators'
 import DataRequester from '../helper/DataRequester'
-import USERLIST from '../mock/user';
+//import USERLIST from '../mock/user';
 
 const { checkEmptyAndUndefined, checkFieldMatch, getDataFromForm } = ValidationRules()
-const { sendCreateUserReq } = DataRequester()
+const { sendCreateUserReq, sendGetUsersReq } = DataRequester()
 
+let USERLIST = [];
 const TABLE_HEAD = [
   { id: 'fullname', label: 'Full Name', alignRight: false },
   { id: 'username', label: 'User Name', alignRight: false },
@@ -51,6 +52,30 @@ function descendingComparator(a, b, orderBy) {
     return 1;
   }
   return 0;
+}
+
+function getUsers() {
+  return sendGetUsersReq("/user").then(response => {
+    console.log(response.data.result)
+    USERLIST = cleanResponse(response.data.result)
+    console.log("USERLIST IS : ", USERLIST)
+  }).catch(function (error) {
+    console.log("Error getting users : ", error.response.data.error)
+  })
+}
+
+function cleanResponse(data) {
+  return data.map( (value) => {
+    return {
+      id: value.id,
+      fullName: value.fullName,
+      userName: value.userName,
+      role: value.role.roleName,
+      team: value.team.name,
+      createdBy: value.createdBy.fullName,
+      status: value.isActive,
+    }
+  })
 }
 
 function getComparator(order, orderBy) {
@@ -74,11 +99,13 @@ function applySortFilter(array, comparator, query) {
 
 export default function User({ token }) {
 
+  
   const [alert, setAlert] = useState({
     display: "none",
     errorMessage: ""
   });
   const [loading, setLoading] = useState(false);
+  const [fetchingUsers, setFetching] = useState(true);
   const [page, setPage] = useState(0);
   const [dialogueOpened, setOpenDialogue] = useState(false);
   const [order, setOrder] = useState('asc');
@@ -86,6 +113,8 @@ export default function User({ token }) {
   const [orderBy, setOrderBy] = useState('name');
   const [filterName, setFilterName] = useState('');
   const [rowsPerPage, setRowsPerPage] = useState(5);
+
+  getUsers()
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
@@ -134,12 +163,10 @@ export default function User({ token }) {
   };
 
   const changeStatusColor = (status) => {
-    if (status === "Banned")
+    if (status)
+      return "success"
+    else
       return "error"
-    else if (status === "Active")
-      return 'success'
-    else if (status === "Pending")
-      return 'info'
   };
 
   const showCreateUserDialogue = () => {
@@ -186,16 +213,16 @@ export default function User({ token }) {
     setAlert({ display: "none" })
 
     sendCreateUserReq('/user', userData).then(function (response) {
-        setLoading(false)
-        setOpenDialogue(false)
-        console.log(response)
-      }).catch(function (error) {
-        setLoading(false)
-        setAlert({
-          display: "show",
-          errorMessage: error.response.data.error
-        })
+      setLoading(false)
+      setOpenDialogue(false)
+      console.log(response)
+    }).catch(function (error) {
+      setLoading(false)
+      setAlert({
+        display: "show",
+        errorMessage: error.response.data.error
       })
+    })
   }
 
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - USERLIST.length) : 0;
@@ -207,8 +234,7 @@ export default function User({ token }) {
   return (
     // <Page title="User | Minimal-UI">
     <Container sx={{ mt: 6 }}>
-
-      <UserCreationDialog
+      <Dialog
         alert={alert}
         loading={loading}
         onSubmit={handleCreateUserButtonClick}
@@ -253,8 +279,8 @@ export default function User({ token }) {
               {filteredUsers
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((row) => {
-                  const { id, name, username, role, team, createdBy, status, avatarUrl } = row;
-                  const isItemSelected = selected.indexOf(name) !== -1;
+                  const { id, fullName, userName, role, team, createdBy, status, avatarUrl } = row;
+                  const isItemSelected = selected.indexOf(fullName) !== -1;
 
                   return (
                     <TableRow
@@ -268,23 +294,23 @@ export default function User({ token }) {
                       <TableCell padding="checkbox">
                         <Checkbox
                           checked={isItemSelected}
-                          onChange={(event) => handleClick(event, name)}
+                          onChange={(event) => handleClick(event, fullName)}
                         />
                       </TableCell>
                       <TableCell component="th" scope="row" padding="none">
                         <Stack direction="row" alignItems="center" spacing={2}>
                           <Avatar
-                            alt={name} src={avatarUrl}
+                            alt={fullName} src={avatarUrl}
                           />
                           <Typography variant="subtitle2" noWrap>
 
-                            {name}
+                            {fullName}
 
                           </Typography>
                         </Stack>
                       </TableCell>
                       <TableCell align="left">
-                        {username}
+                        {userName}
                       </TableCell>
                       <TableCell align="left">
                         {role}
@@ -300,7 +326,7 @@ export default function User({ token }) {
                           variant="ghost"
                           color={changeStatusColor(status)}
                         >
-                          {status}
+                          {status ? "Active" : "Banned"}
                         </Label>
                       </TableCell>
 

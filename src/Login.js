@@ -44,6 +44,7 @@ export default function SignIn({setToken}) {
 
   console.log("Login rendered")
   const [loading, setLoading] = useState(false);
+  console.log("loading value ", loading)
   let navigate = useNavigate();
 
   async function loginUser(data) {
@@ -54,6 +55,7 @@ export default function SignIn({setToken}) {
       if (response.data.status) {
 
         setToken(response.data.result)
+        navigate("/home")
       } else {
 
         updateError("show", response.data.error)

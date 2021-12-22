@@ -27,4 +27,4 @@ const users = [...Array(24)].map((_, index) => ({
   ])
 }));
 
-export default users;
+export default users; 

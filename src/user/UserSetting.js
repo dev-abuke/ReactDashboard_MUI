@@ -1,43 +1,74 @@
 import React, { useState } from 'react';
 import { Box, Button, Grid, TextField, Typography, Divider } from '@mui/material';
 import LoadingButton from '@mui/lab/LoadingButton';
+import ResetUser from "./ResetUser"
+import EditUser from "./EditUser"
 
 export default function UserSetting({ onSubmit, loading }) {
 
+    const [selected, setSelected] = useState({
+        selected: "RESET",
+        resetColor: "BLUE",
+        editColor: "GREY",
+        resetBorderSize: 3,
+        editBorderSize: 1
+    });
+
+    const handleResetClick = () => {
+        setSelected(previousState => {
+
+            if (previousState.selected === "EDIT") {
+                return {
+                    ...previousState,
+                    selected: "RESET",
+                    resetColor: "BLUE",
+                    editColor: "GREY",
+                    resetBorderSize: 3,
+                    editBorderSize: 1,
+                }
+            }
+
+            return {
+                ...previousState,
+            }
+        });
+    }
+
+    const handleEditClick = () => {
+        setSelected(previousState => {
+
+            if (previousState.selected === "RESET") {
+                return {
+                    ...previousState,
+                    selected: "EDIT",
+                    resetColor: "GREY",
+                    editColor: "BLUE",
+                    resetBorderSize: 1,
+                    editBorderSize: 3,
+                }
+            }
+
+            return {
+                ...previousState,
+            }
+        });
+    }
+
     return (
-
         <Grid maxWidth="md" sx={{ p: 2, m: 3, boxShadow: 4, borderRadius: 1 }} align="center" container rowSpacing={3} spacing={2} >
-
             <Grid item xs={6}>
-                <Button variant="text">
+                <Typography sx={{ '&:hover': { cursor: "pointer" } }} color={selected.resetColor} onClick={handleResetClick} variant="text">
                     RESET PASSWORD
-                </Button>
+                </Typography>
             </Grid>
             <Grid item xs={6}>
-                <Button disabled variant="text" >
+                <Typography sx={{ '&:hover': { cursor: "pointer" } }} color={selected.editColor} onClick={handleEditClick} variant="text" >
                     EDIT USER
-                </Button>
+                </Typography>
             </Grid>
-            <Grid sx={{ borderBottom: 3, borderColor: "blue" }} item xs={6} />
-            <Grid sx={{ borderBottom: 1, borderColor: "lightGrey" }} item xs={6} />
-            <Grid item xs={6}>
-                <TextField fullWidth id="password" name="password" type="password" label="Password" variant="outlined" />
-            </Grid>
-            <Grid item xs={6}>
-                <TextField fullWidth id="confirmPassword" type="password" name="confirm" label="Confirm Password" variant="outlined" />
-            </Grid>
-            <Grid item lg={6} md={6} sm={6} />
-            <Grid item xs={4} >
-                <LoadingButton
-                    type="submit"
-                    loading={loading}
-                    fullWidth
-                    sx={{ '&:hover': { backgroundColor: "#E53e31" }, backgroundColor: "#f53e31" }}
-                    size="large"
-                    variant="contained">
-                    RESET
-                </LoadingButton>
-            </Grid>
+            <Grid sx={{ borderBottom: selected.resetBorderSize, borderColor: selected.resetColor }} item xs={6} />
+            <Grid sx={{ borderBottom: selected.editBorderSize, borderColor: selected.editColor }} item xs={6} />
+            {selected.selected === "RESET" ? <ResetUser /> : <EditUser />}
         </Grid>
     );
 }

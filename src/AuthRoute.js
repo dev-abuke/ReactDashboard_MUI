@@ -1,12 +1,15 @@
-import React from "react";
+import React from 'react';
 import { Navigate, Route } from "react-router-dom";
+import useToken from "./useToken";
 
-const AuthRoute = props => {
-  const { isAuthUser } = props;
-  if (isAuthUser) return <Route path="/home" exact element={<Navigate to="/home" />} />;
-  else if (!isAuthUser) return <Route path="/" exact element={<Navigate to="/" />} />;
-
-  return <Route {...props} />;
-};
-
-export default AuthRoute;
+function PrivateRoute({ children }) {
+  const { token } = useToken();
+  console.log("Auth route",  token)
+ 
+  if(!token){
+    return (<Navigate to="/" />);
+  }
+  console.log("passed auth")
+  return children
+}
+export default PrivateRoute;
