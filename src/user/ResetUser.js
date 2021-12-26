@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
 import { Box, Button, Grid, TextField, Typography, Divider } from '@mui/material';
 import LoadingButton from '@mui/lab/LoadingButton';
+import CONSTANTS from '../helper/Constants'
 
 export default function ResetUser({ onSubmit, loading }) {
 
     return (
-        <Grid maxWidth="md" sx={{ p: 1, m: 1}} align="center" container rowSpacing={3} spacing={2} >
+        <Grid component="form" onSubmit={(event) => onSubmit(event, CONSTANTS.RESET_USER_PASSWORD)} maxWidth="md" sx={{ p: 1, m: 1}} align="center" container rowSpacing={3} spacing={2} >
             <Grid item xs={6}>
                 <TextField fullWidth id="password" name="password" type="password" label="Password" variant="outlined" />
             </Grid>

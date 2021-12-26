@@ -27,6 +27,10 @@ function ResponsiveDrawer(props) {
     setMobileOpen(!mobileOpen);
   };
 
+  const getLink = (text) =>{
+    return "/" + text.toLowerCase()
+  }
+
   const drawer = (
     <div>
       <Toolbar
@@ -73,11 +77,11 @@ function ResponsiveDrawer(props) {
       </Toolbar>
       <Divider />
       <List>
-        {["DASHBOARD", "VEHICLES", "USER", "TEAM", "ROLES", "REPORT"].map(
+        {["DASHBOARD", "VEHICLES", "USERS", "TEAMS", "ROLES", "REPORT"].map(
           (text, index) => (
             <ListItem
               component={RouterLink}
-              to="/users"
+              to={getLink(text)}
               button
               key={text}
               sx={{
@@ -88,7 +92,7 @@ function ResponsiveDrawer(props) {
                 width: "185px",
                 borderRadius: "5%",
               }}
-             >
+            >
               <ListItemIcon>
                 {index === 0 ? (
                   <DashboardIcon
@@ -133,7 +137,10 @@ function ResponsiveDrawer(props) {
                   />
                 ) : null}
               </ListItemIcon>
-              <ListItemText >
+              <ListItemText
+                component={RouterLink}
+                to="/users"
+              >
                 {text}
               </ListItemText>
             </ListItem>
@@ -213,9 +220,9 @@ function ResponsiveDrawer(props) {
           {drawer}
         </Drawer>
       </Box>
-     
-        {/* <Toolbar /> */}
-      </Box>
+
+      {/* <Toolbar /> */}
+    </Box>
   );
 }
 

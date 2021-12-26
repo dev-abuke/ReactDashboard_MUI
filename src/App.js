@@ -2,7 +2,9 @@ import './App.css';
 import Login from './Login';
 import AuthRoute from './AuthRoute';
 import Home from "./Home";
-import User from "./Users/ManageUsers";
+import User from "./User/ManageUsers";
+import Team from "./Team/ManageTeam";
+import Role from "./Role/ManageRole";
 import PageNotFound from "./PageNotFound";
 import {
   BrowserRouter as Router,
@@ -25,6 +27,8 @@ function App() {
         <Route path="/" exact element={<Login setToken={setToken} />} />
         <Route path="/home" element={<AuthRoute> <Home /> </AuthRoute>} />
         <Route path="/users" element={<AuthRoute> <User /> </AuthRoute>} />
+        <Route path="/teams" element={<AuthRoute> <Team /> </AuthRoute>} />
+        <Route path="/roles" element={<AuthRoute> <Role /> </AuthRoute>} />
         <Route path="*" element={<PageNotFound />} />
       </Routes>
     </Router>

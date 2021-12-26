@@ -4,7 +4,7 @@ import LoadingButton from '@mui/lab/LoadingButton';
 import ResetUser from "./ResetUser"
 import EditUser from "./EditUser"
 
-export default function UserSetting({ onSubmit, loading }) {
+export default function UserSetting({ data, onSubmit, loading }) {
 
     const [selected, setSelected] = useState({
         selected: "RESET",
@@ -68,7 +68,9 @@ export default function UserSetting({ onSubmit, loading }) {
             </Grid>
             <Grid sx={{ borderBottom: selected.resetBorderSize, borderColor: selected.resetColor }} item xs={6} />
             <Grid sx={{ borderBottom: selected.editBorderSize, borderColor: selected.editColor }} item xs={6} />
-            {selected.selected === "RESET" ? <ResetUser /> : <EditUser />}
+            {selected.selected === "RESET" ? 
+            <ResetUser loading={loading} onSubmit={onSubmit} /> : 
+            <EditUser data={data} loading={loading} onSubmit={onSubmit} />}
         </Grid>
     );
 }

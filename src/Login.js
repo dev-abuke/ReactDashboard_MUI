@@ -15,7 +15,7 @@ import DataRequester from './helper/DataRequester';
 import {Navigate, useNavigate  } from "react-router-dom";
 
 const { getDataFromForm } = ValidationRules()
-const { sendSignInReq } = DataRequester()
+const { postDataTo } = DataRequester()
 
 function Copyright(props) {
 
@@ -49,7 +49,7 @@ export default function SignIn({setToken}) {
 
   async function loginUser(data) {
 
-    sendSignInReq('/user/signIn', data).then(response => {
+    postDataTo('/user/signIn', data).then(response => {
 
       setLoading(false)
       if (response.data.status) {

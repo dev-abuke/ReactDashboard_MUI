@@ -2,49 +2,12 @@ import React, { useState } from 'react';
 import { Box, MenuItem, Grid } from '@mui/material';
 import LoadingButton from '@mui/lab/LoadingButton';
 import TextField from '@mui/material/TextField';
+import CONSTANTS from '../helper/Constants';
 
-const roles = [
-    {
-        value: 'manager',
-        label: 'Manager',
-    },
-    {
-        label: 'Reception',
-        value: 'reception',
-    },
-    {
-        label: 'Installer',
-        value: 'installer',
-    },
-    {
-        label: 'Administrator',
-        value: 'admin',
-    },
-];
+export default function UserCreationFeilds({ data, onSubmit, loading }) {
 
-const teams = [
-    {
-        value: 'ux-ui',
-        label: 'UX/UI',
-    },
-    {
-        label: 'Frontend',
-        value: 'frontend',
-    },
-    {
-        label: 'Backend',
-        value: 'backend',
-    },
-    {
-        label: 'Installation',
-        value: 'install',
-    },
-];
-
-export default function UserCreationFeilds({ onSubmit, loading }) {
-
-    const [role, setRole] = React.useState('');
-    const [team, setTeam] = React.useState('');
+    const [role, setRole] = useState('');
+    const [team, setTeam] = useState('');
 
     const handleRoleChange = (event) => {
         setRole(event.target.value);
@@ -56,9 +19,10 @@ export default function UserCreationFeilds({ onSubmit, loading }) {
 
     return (
         <Box
+            m={3}
             component="form"
+            onSubmit={(event) => {onSubmit(event, CONSTANTS.CREATE_USER)}}
             autoComplete="off"
-            onSubmit={onSubmit}
         >
             <Grid align="center" container rowSpacing={3} spacing={8} alignItems="center" >
 
@@ -84,9 +48,9 @@ export default function UserCreationFeilds({ onSubmit, loading }) {
                         value={role}
                         onChange={handleRoleChange}
                     >
-                        {roles.map((option) => (
-                            <MenuItem key={option.value} value={option.value}>
-                                {option.label}
+                        {data.ROLELIST.map((option) => (
+                            <MenuItem key={option.id} value={option.id}>
+                                {option.role}
                             </MenuItem>
                         ))}
                     </TextField>
@@ -101,9 +65,9 @@ export default function UserCreationFeilds({ onSubmit, loading }) {
                         value={team}
                         onChange={handleTeamChange}
                     >
-                        {teams.map((option) => (
-                            <MenuItem key={option.value} value={option.value}>
-                                {option.label}
+                        {data.TEAMLIST.map((option) => (
+                            <MenuItem key={option.id} value={option.id}>
+                                {option.team}
                             </MenuItem>
                         ))}
                     </TextField>

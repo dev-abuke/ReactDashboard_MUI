@@ -1,8 +1,9 @@
 import { filter } from 'lodash';
-import Axios from 'axios';
 import { useState } from 'react';
+import AlertTitle from '@mui/material/AlertTitle';
+import Alert from '@mui/material/Alert';
 import AddIcon from '@mui/icons-material/Add';
-import { Link as RouterLink } from 'react-router-dom';
+
 // material
 import {
   Card,
@@ -19,29 +20,24 @@ import {
   TableContainer,
   TablePagination
 } from '@mui/material';
+
 // components
-import Page from '../Page';
-import Label from '../Label';
-import Scrollbar from '../Scrollbar';
 import SearchNotFound from '../SearchNotFound';
-import Dialog from '../user/UserCreationDialogue';
-import { UserListHead, UserListToolbar, UserMoreMenu } from '../user';
+import { UserListHead, UserListToolbar, UserMoreMenu } from '../User/index';
 import ValidationRules from '../helper/DataValidators'
 import DataRequester from '../helper/DataRequester'
-//import USERLIST from '../mock/user';
+import CONSTANTS from '../helper/Constants';
+import CreateTeamDialog from './CreateTeam';
+import { getRoles } from '@testing-library/react';
 
-const { checkEmptyAndUndefined, checkFieldMatch, getDataFromForm } = ValidationRules()
-const { sendCreateUserReq, sendGetUsersReq } = DataRequester()
+const { checkEmptyAndUndefined, getDataFromForm } = ValidationRules()
+const { postDataTo, getDataFrom } = DataRequester()
 
-let USERLIST = [];
 const TABLE_HEAD = [
-  { id: 'fullname', label: 'Full Name', alignRight: false },
-  { id: 'username', label: 'User Name', alignRight: false },
-  { id: 'role', label: 'Role', alignRight: false },
-  { id: 'team', label: 'Team', alignRight: false },
-  { id: 'createdby', label: 'Created By', alignRight: false },
-  { id: 'status', label: 'Status', alignRight: false },
-  { id: 'setting', label: 'Settings', alignRight: true },
+  { id: 'team', label: 'Team Name', align: "left" },
+  { id: 'createdby', label: 'Created By', align: "left" },
+  { id: 'createdDate', label: 'Date Created', align: "right" },
+  { id: 'setting', label: 'Settings', align: "right" },
 ];
 
 function descendingComparator(a, b, orderBy) {
@@ -54,27 +50,34 @@ function descendingComparator(a, b, orderBy) {
   return 0;
 }
 
-function getUsers() {
-  return sendGetUsersReq("/user").then(response => {
-    console.log(response.data.result)
-    USERLIST = cleanResponse(response.data.result)
-    console.log("USERLIST IS : ", USERLIST)
-  }).catch(function (error) {
-    console.log("Error getting users : ", error.response.data.error)
+function cleanTeamData(data) {
+  return data.map(value => {
+    return {
+      id: value.id,
+      team: value.name,
+      createdBy: value.createdBy.fullName,
+      createdDate: value.createdDate.stringDate,
+    }
   })
 }
 
-function cleanResponse(data) {
-  return data.map( (value) => {
-    return {
-      id: value.id,
-      fullName: value.fullName,
-      userName: value.userName,
-      role: value.role.roleName,
-      team: value.team.name,
-      createdBy: value.createdBy.fullName,
-      status: value.isActive,
-    }
+function getTeams(setFetched){
+  
+  getDataFrom("/team").then(response => {
+
+    const TEAMLIST = cleanTeamData(response.data.result)
+
+    
+    console.log("TEAMLIST BEFORE CLEAN: ", response.data.result)
+    console.log("TEAMLIST IS : ", TEAMLIST)
+
+    setFetched({
+      TEAMLIST: TEAMLIST,
+      IS_FETCHED: true
+    })
+
+  }).catch(error => {
+    console.log("Error getting data : ", error)
   })
 }
 
@@ -85,53 +88,64 @@ function getComparator(order, orderBy) {
 }
 
 function applySortFilter(array, comparator, query) {
-  const stabilizedThis = array.map((el, index) => [el, index]);
+  const stabilizedThis = array.map((value, index) => [value, index]);
   stabilizedThis.sort((a, b) => {
     const order = comparator(a[0], b[0]);
     if (order !== 0) return order;
     return a[1] - b[1];
   });
   if (query) {
-    return filter(array, (_user) => _user.name.toLowerCase().indexOf(query.toLowerCase()) !== -1);
+    return filter(array, (teams) => teams.team.toLowerCase().indexOf(query.toLowerCase()) !== -1);
   }
   return stabilizedThis.map((el) => el[0]);
 }
 
-export default function User({ token }) {
+export default function ManageTeam() {
 
-  
-  const [alert, setAlert] = useState({
+  const [error, setError] = useState({
     display: "none",
-    errorMessage: ""
+    message: "",
   });
+
+  const [success, setSuccess] = useState({
+    display: "none",
+    message: "",
+    data: "",
+  });
+
+  const [fetchedData, setFetched] = useState({
+    TEAMLIST: [], 
+    IS_FETCHED: false
+  });
+
   const [loading, setLoading] = useState(false);
-  const [fetchingUsers, setFetching] = useState(true);
+  const [id, setId] = useState("");
   const [page, setPage] = useState(0);
-  const [dialogueOpened, setOpenDialogue] = useState(false);
+  const [dialog, setOpenDialogue] = useState({ isDialogOpen: false, openedBy: "" });
   const [order, setOrder] = useState('asc');
   const [selected, setSelected] = useState([]);
-  const [orderBy, setOrderBy] = useState('name');
+  const [orderBy, setOrderBy] = useState('team');
   const [filterName, setFilterName] = useState('');
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
-  getUsers()
+  fetchedData.IS_FETCHED ? console.log("Already fetched") : getTeams(setFetched)
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
     setOrder(isAsc ? 'desc' : 'asc');
-    setOrderBy(property);
+    setOrderBy(property); 
   };
 
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
-      const newSelecteds = USERLIST.map((n) => n.name);
+      const newSelecteds = fetchedData.TEAMLIST.map((n) => n.name);
       setSelected(newSelecteds);
       return;
     }
     setSelected([]);
   };
 
-  const handleClick = (event, name) => {
+  const handleCheckboxClick = (event, name) => {
     const selectedIndex = selected.indexOf(name);
     let newSelected = [];
     if (selectedIndex === -1) {
@@ -162,97 +176,102 @@ export default function User({ token }) {
     setFilterName(event.target.value);
   };
 
-  const changeStatusColor = (status) => {
-    if (status)
-      return "success"
-    else
-      return "error"
-  };
-
-  const showCreateUserDialogue = () => {
-    setOpenDialogue(true);
+  const onCreateTeamButtonClick = () => {
+    setOpenDialogue({ isDialogOpen: true, openedBy: CONSTANTS.CREATE_TEAM });
   }
 
-  const handleCreateUserButtonClick = (event) => {
-    event.preventDefault();
+  const onSettingIconClick = (id) => {
+    console.log("The id is : ", id)
+    setId(id)
+    setOpenDialogue({ isDialogOpen: true, openedBy: CONSTANTS.TEAM_SETTING  });
+  }
 
-    const userData = getDataFromForm(event.target)
+  const createTeam = (teamData) => {
 
-    const { fullName, userName, password, confirmPass } = userData
-
-    console.log("UserData : ", userData)
-
-    if (checkEmptyAndUndefined(fullName)) {
-
-      setAlert({ display: "show", errorMessage: "Fullname Can Not Be Empty!" })
-      return
+    const team = { 
+        name:  teamData.team
     }
 
-    if (checkEmptyAndUndefined(userName)) {
+    if (checkEmptyAndUndefined(team.name)) {
 
-      setAlert({ display: "show", errorMessage: "Username Can Not Be Empty!" })
-      return
-    }
-    if (checkEmptyAndUndefined(password)) {
-
-      setAlert({ display: "show", errorMessage: "You Must Provide Password" })
-      return
-    }
-    if (checkEmptyAndUndefined(confirmPass)) {
-
-      setAlert({ display: "show", errorMessage: "You Must Confirm Password" })
-      return
-    }
-    if (!checkFieldMatch(password, confirmPass)) {
-
-      setAlert({ display: "show", errorMessage: "Passwords Don't Match" })
+        setError({ displayError: "show", errorMessage: "Team Name Can Not Be Empty!" })
       return
     }
 
     setLoading(true)
-    setAlert({ display: "none" })
+    setError({ displayError: "none" })
 
-    sendCreateUserReq('/user', userData).then(function (response) {
+    postDataTo('/team', team).then(function (response) {
       setLoading(false)
       setOpenDialogue(false)
-      console.log(response)
-    }).catch(function (error) {
+      console.log("Respose from team creation : ", response)
+      setSuccess({display: "show", message: "Team Created", data: response.data.result.name})      
+      setFetched(previousState => {
+        return {
+          ...previousState,
+          IS_FETCHED: false,
+        }
+      })
+    }).catch(function (err) {
       setLoading(false)
-      setAlert({
-        display: "show",
-        errorMessage: error.response.data.error
+      setError({
+        displayError: "show",
+        errorMessage: err.response.data.error
       })
     })
   }
+  
+  const handleSubmit = (event, EventType) => {
 
-  const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - USERLIST.length) : 0;
+    event.preventDefault();
 
-  const filteredUsers = applySortFilter(USERLIST, getComparator(order, orderBy), filterName);
+    const userData = getDataFromForm(event.target)
+    
+    console.log("The Whole User Data : ", userData)
+
+    EventType === CONSTANTS.CREATE_TEAM ? 
+    createTeam(userData) : 
+    console.log("The Type of event is from default : ", EventType)
+
+    console.log("UserData : ", userData)
+    console.log("The Type of event is : ", EventType)
+    console.log("The ID is : ", id)
+  }
+
+  const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - fetchedData.TEAMLIST.length) : 0;
+
+  const filteredUsers = applySortFilter(fetchedData.TEAMLIST, getComparator(order, orderBy), filterName);
 
   const isUserNotFound = filteredUsers.length === 0;
 
   return (
     // <Page title="User | Minimal-UI">
-    <Container sx={{ mt: 6 }}>
-      <Dialog
-        alert={alert}
+    <Container sx={{ mt: 2 }}>
+      <CreateTeamDialog
+        data= {fetchedData}
+        alert={error}
         loading={loading}
-        onSubmit={handleCreateUserButtonClick}
-        dialogueOpened={dialogueOpened}
+        onSubmit={handleSubmit}
+        dialogueOpened={dialog} 
         setOpen={setOpenDialogue}
       />
-
+      <Stack direction="row" fullWidth alignItems="center" justifyContent="right" mb={3} >
+        <Alert variant="filled" onClose={() => {setSuccess({display: "none"})}} sx={{ display: success.display }} severity="success">
+          <AlertTitle>{success.message} Successfuly</AlertTitle>
+          {success.data.name}
+        </Alert>
+      </Stack>
       <Stack direction="row" alignItems="center" justifyContent="space-between" mb={3}>
         <Typography sx={{ fontWeight: "bold" }} variant="h5" gutterBottom>
-          MANAGE USERS
+          MANAGE TEAMS
         </Typography>
         <Button
-          onClick={showCreateUserDialogue}
+          onClick={onCreateTeamButtonClick}
           sx={{ '&:hover': { backgroundColor: "#E53e31" }, backgroundColor: "#f53e31" }}
           variant="contained"
           startIcon={<AddIcon />}
         >
-          Create User
+          Create Team
         </Button>
       </Stack>
 
@@ -270,7 +289,7 @@ export default function User({ token }) {
               order={order}
               orderBy={orderBy}
               headLabel={TABLE_HEAD}
-              rowCount={USERLIST.length}
+              rowCount={fetchedData.TEAMLIST.length}
               numSelected={selected.length}
               onRequestSort={handleRequestSort}
               onSelectAllClick={handleSelectAllClick}
@@ -279,8 +298,8 @@ export default function User({ token }) {
               {filteredUsers
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((row) => {
-                  const { id, fullName, userName, role, team, createdBy, status, avatarUrl } = row;
-                  const isItemSelected = selected.indexOf(fullName) !== -1;
+                  const { team, createdBy, createdDate } = row;
+                  const isItemSelected = selected.indexOf(team) !== -1;
 
                   return (
                     <TableRow
@@ -294,44 +313,30 @@ export default function User({ token }) {
                       <TableCell padding="checkbox">
                         <Checkbox
                           checked={isItemSelected}
-                          onChange={(event) => handleClick(event, fullName)}
+                          onChange={(event) => handleCheckboxClick(event, team)}
                         />
                       </TableCell>
                       <TableCell component="th" scope="row" padding="none">
                         <Stack direction="row" alignItems="center" spacing={2}>
                           <Avatar
-                            alt={fullName} src={avatarUrl}
+                            alt={team} src={team}
                           />
                           <Typography variant="subtitle2" noWrap>
 
-                            {fullName}
+                            {team}
 
                           </Typography>
                         </Stack>
                       </TableCell>
                       <TableCell align="left">
-                        {userName}
-                      </TableCell>
-                      <TableCell align="left">
-                        {role}
-                      </TableCell>
-                      <TableCell align="left">
-                        {team}
-                      </TableCell>
-                      <TableCell align="left">
                         {createdBy}
                       </TableCell>
-                      <TableCell align="left">
-                        <Label
-                          variant="ghost"
-                          color={changeStatusColor(status)}
-                        >
-                          {status ? "Active" : "Banned"}
-                        </Label>
+                      <TableCell align="right">
+                        {createdDate}
                       </TableCell>
 
                       <TableCell align="right">
-                        <UserMoreMenu />
+                        <UserMoreMenu onSettingIconClick={onSettingIconClick} id={id} />
                       </TableCell>
                     </TableRow>
                   );
@@ -360,7 +365,7 @@ export default function User({ token }) {
         <TablePagination
           rowsPerPageOptions={[5, 10, 25]}
           component="div"
-          count={USERLIST.length}
+          count={fetchedData.TEAMLIST.length}
           rowsPerPage={rowsPerPage}
           page={page}
           onPageChange={handleChangePage}
@@ -368,6 +373,5 @@ export default function User({ token }) {
         />
       </Card>
     </Container>
-    // </Page>
   );
 }

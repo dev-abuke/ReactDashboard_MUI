@@ -41,6 +41,7 @@ export default function ValidationRules() {
         const password = data.get("password");
         const confirmPass = data.get("confirm");
         const role = data.get("role");
+        const accessLevel = data.get("accessLevel");
         const team = data.get("team");
 
         return {
@@ -48,6 +49,7 @@ export default function ValidationRules() {
             userName: username,
             password: password,
             confirmPass: confirmPass,
+            accessLevel: accessLevel, 
             role: role,
             team: team,
         }

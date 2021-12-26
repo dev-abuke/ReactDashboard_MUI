@@ -11,19 +11,14 @@ export default function DataRequester() {
         }
     }
  
-    const sendCreateUserReq = (relativeUrl, data) => {
-        
+    const postDataTo = (relativeUrl, data) => {
+
         return Post(relativeUrl, data)
     }
 
-    const sendSignInReq = (relativeUrl, data) => {
+    const getDataFrom = (relativeUrl) => {
 
-        return Post(relativeUrl, data)
-
-    }
-
-    const sendGetUsersReq = (relativeUrl) => {
-        
+        config.headers['authorization'] = JSON.parse(sessionStorage.getItem(CONSTANTS.TOKEN_NAME))
         return Get(relativeUrl)
 
     }
@@ -46,8 +41,7 @@ export default function DataRequester() {
     }
 
     return {
-        sendCreateUserReq,
-        sendSignInReq,
-        sendGetUsersReq
+        postDataTo,
+        getDataFrom,
     }
 }
