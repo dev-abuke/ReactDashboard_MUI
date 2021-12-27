@@ -29,6 +29,7 @@ import DataRequester from '../helper/DataRequester'
 import CONSTANTS from '../helper/Constants';
 import CreateRoleDialog from './CreateRole';
 import { getRoles } from '@testing-library/react';
+import { Helmet } from 'react-helmet';
 
 const { checkEmptyAndUndefined, getDataFromForm } = ValidationRules()
 const { postDataTo, getDataFrom } = DataRequester()
@@ -257,6 +258,9 @@ export default function ManageRole() {
   return (
     // <Page title="User | Minimal-UI">
     <Container sx={{ mt: 2 }}>
+    <Helmet>
+        <title>Manage Roles</title>
+      </Helmet>
       <CreateRoleDialog
         data= {fetchedData}
         alert={error}

@@ -6,6 +6,7 @@ import User from "./User/ManageUsers";
 import Team from "./Team/ManageTeam";
 import Role from "./Role/ManageRole";
 import PageNotFound from "./PageNotFound";
+import { Helmet } from 'react-helmet';
 import {
   BrowserRouter as Router,
   Routes,
@@ -23,6 +24,10 @@ function App() {
 
   return (
     <Router>
+      <Helmet>
+        <title></title>
+        <body style="background-color:#f7f7f7;" />
+      </Helmet>
       <Routes>
         <Route path="/" exact element={<Login setToken={setToken} />} />
         <Route path="/home" element={<AuthRoute> <Home /> </AuthRoute>} />

@@ -3,6 +3,7 @@ import { useState } from 'react';
 import AlertTitle from '@mui/material/AlertTitle';
 import Alert from '@mui/material/Alert';
 import AddIcon from '@mui/icons-material/Add';
+import { Helmet } from 'react-helmet';
 
 // material
 import {
@@ -247,6 +248,9 @@ export default function ManageTeam() {
   return (
     // <Page title="User | Minimal-UI">
     <Container sx={{ mt: 2 }}>
+    <Helmet>
+        <title>Manage Teams</title>
+      </Helmet>
       <CreateTeamDialog
         data= {fetchedData}
         alert={error}

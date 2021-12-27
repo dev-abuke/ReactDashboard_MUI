@@ -7,12 +7,17 @@ import TableContainer from '@mui/material/TableContainer';
 import TableRow from '@mui/material/TableRow';
 import Dashboard from "./DashboardContainer.js";
 import CardBar from "./DashboardHeader/Card"
+    import { Helmet } from 'react-helmet';
 
 function Home(props) {
   return (
     <div>
 
       <TableContainer>
+    <Helmet>
+        <title>Dashboard</title>
+        <body style="background-color:#f7f7f7;" />
+      </Helmet>
         <Table sx={{ minWidth: 650 }} >
           <TableBody>
 

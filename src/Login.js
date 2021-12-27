@@ -13,6 +13,7 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import ValidationRules from './helper/DataValidators';
 import DataRequester from './helper/DataRequester';
 import {Navigate, useNavigate  } from "react-router-dom";
+import { Helmet } from 'react-helmet';
 
 const { getDataFromForm } = ValidationRules()
 const { postDataTo } = DataRequester()
@@ -115,6 +116,10 @@ export default function SignIn({setToken}) {
 
   return (
     <ThemeProvider theme={theme}>
+    <Helmet>
+        <title>Sign In</title>
+        <body style="background-color:#f7f7f7;" />
+      </Helmet>
       <Container component="main" maxWidth="xs">
         <Card sx={{ mt: 8, boxShadow: 5, pb: 5, pt: 3 }}>
           <CssBaseline />

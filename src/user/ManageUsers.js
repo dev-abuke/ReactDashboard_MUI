@@ -5,6 +5,7 @@ import AlertTitle from '@mui/material/AlertTitle';
 import Alert from '@mui/material/Alert';
 import AddIcon from '@mui/icons-material/Add';
 import { Link as RouterLink } from 'react-router-dom';
+import { Helmet } from 'react-helmet';
 // material
 import {
   Card,
@@ -415,6 +416,9 @@ export default function User({ token }) {
   return (
     // <Page title="User | Minimal-UI">
     <Container sx={{ mt: 2 }}>
+    <Helmet>
+        <title>Manage Users</title>
+      </Helmet>
       <CustomDialog
         data= {fetchedData}
         alert={errorAlert}
