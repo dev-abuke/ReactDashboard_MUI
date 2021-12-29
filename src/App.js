@@ -7,6 +7,9 @@ import Team from "./Team/ManageTeam";
 import Role from "./Role/ManageRole";
 import PageNotFound from "./PageNotFound";
 import { Helmet } from 'react-helmet';
+import ThemeConfig from './theme';
+import Dashboard from "./DashboardContainer.js";
+import Routers from './routes';
 import {
   BrowserRouter as Router,
   Routes,
@@ -16,27 +19,29 @@ import {
 } from "react-router-dom";
 import useToken from "./useToken";
 
-
 function App() {
   //console.log("token available")
 
   const { token, setToken } = useToken();
 
   return (
-    <Router>
+    <ThemeConfig>
       <Helmet>
         <title></title>
         <body style="background-color:#f7f7f7;" />
       </Helmet>
       <Routes>
         <Route path="/" exact element={<Login setToken={setToken} />} />
-        <Route path="/home" element={<AuthRoute> <Home /> </AuthRoute>} />
-        <Route path="/users" element={<AuthRoute> <User /> </AuthRoute>} />
-        <Route path="/teams" element={<AuthRoute> <Team /> </AuthRoute>} />
-        <Route path="/roles" element={<AuthRoute> <Role /> </AuthRoute>} />
+        <Route path="/home" element={<AuthRoute> <Home /> </AuthRoute>} >
+          <Route path="" element={<Navigate to="/home/dashboard" replace />} />
+          <Route path="users" element={<AuthRoute> <User /> </AuthRoute>} />
+          <Route path="dashboard" element={<AuthRoute> <Dashboard /> </AuthRoute>} />
+          <Route path="teams" element={<AuthRoute> <Team Hello={"Hello from App"} /> </AuthRoute>} />
+          <Route path="roles" element={<AuthRoute> <Role /> </AuthRoute>} />
+        </Route>
         <Route path="*" element={<PageNotFound />} />
       </Routes>
-    </Router>
+    </ThemeConfig>
   );
 }
 

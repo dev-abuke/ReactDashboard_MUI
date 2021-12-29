@@ -28,7 +28,7 @@ function ResponsiveDrawer(props) {
   };
 
   const getLink = (text) =>{
-    return "/" + text.toLowerCase()
+    return "/home/" + text.toLowerCase()
   }
 
   const drawer = (
@@ -39,7 +39,6 @@ function ResponsiveDrawer(props) {
           borderRadius: "5%",
           alignContent: "center",
           marginTop: "50px",
-          width: "185px",
           backgroundColor: "#615f5f",
         }}
       >
@@ -163,7 +162,8 @@ function ResponsiveDrawer(props) {
           width: { sm: `calc(100% - ${drawerWidth}px)` },
           ml: { sm: `${drawerWidth}px` },
         }}
-      ></AppBar>
+      >
+      </AppBar>
       <Box
         component="nav"
         sx={{ width: { sm: drawerWidth }, flexShrink: { sm: 0 } }}

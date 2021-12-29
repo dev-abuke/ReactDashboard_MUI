@@ -1,12 +1,10 @@
 import { filter } from 'lodash';
-import Axios from 'axios';
 import { useState } from 'react';
 import AlertTitle from '@mui/material/AlertTitle';
 import Alert from '@mui/material/Alert';
 import AddIcon from '@mui/icons-material/Add';
-import { Link as RouterLink } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
-// material
+
 import {
   Card,
   Table,
@@ -22,17 +20,14 @@ import {
   TableContainer,
   TablePagination
 } from '@mui/material';
-// components
-import Page from '../Page';
+
 import Label from '../Label';
-import Scrollbar from '../Scrollbar';
 import SearchNotFound from '../SearchNotFound';
-import CustomDialog from './UserCreationDialogue';
+import CustomDialog from './UserCustomDialogue';
 import { UserListHead, UserListToolbar, UserMoreMenu } from '.';
 import ValidationRules from '../helper/DataValidators'
 import DataRequester from '../helper/DataRequester'
 import CONSTANTS from '../helper/Constants';
-import { getRoles } from '@testing-library/react';
 
 const { checkEmptyAndUndefined, checkFieldMatch, getDataFromForm } = ValidationRules()
 const { postDataTo, getDataFrom } = DataRequester()
@@ -57,35 +52,39 @@ function descendingComparator(a, b, orderBy) {
   return 0;
 }
 
-function cleanUserData(data) {
-  return data.map(value => {
+function cleanUserData(usersList) {
+
+  return usersList.map(user => {
+
     return {
-      id: value.id,
-      fullName: value.fullName,
-      userName: value.userName,
-      role: value.role.roleName,
-      team: value.team.name,
-      createdBy: value.createdBy.fullName,
-      status: value.isActive,
+      id: user.id,
+      fullName: user.fullName,
+      userName: user.userName,
+      role: user.role.roleName,
+      team: user.team.name,
+      createdBy: user.createdBy.fullName,
+      status: user.isActive,
     }
   })
 }
 
-function cleanRoleData(data) {
-  return data.map(value => {
+function cleanRoleData(rolesList) {
+
+  return rolesList.map(role => {
+
     return {
-      id: value.id,
-      role: value.roleName,
-      accessLevel: value.accessLevel,
+      id: role.id,
+      role: role.roleName,
+      accessLevel: role.accessLevel,
     }
   })
 }
 
-function cleanTeamData(data) {
-  return data.map(value => {
+function cleanTeamData(teamList) {
+  return teamList.map(team => {
     return {
-      id: value.id,
-      team: value.name,
+      id: team.id,
+      team: team.name,
     }
   })
 }
@@ -97,12 +96,6 @@ function getAllData(setFetched){
     const USERLIST = cleanUserData(response[0].data.result)
     const ROLELIST = cleanRoleData(response[1].data.result)
     const TEAMLIST = cleanTeamData(response[2].data.result)
-
-    
-    console.log("USERLIST BEFORE CLEAN: ", response[0].data.result)
-    console.log("USERLIST IS PRO: ", USERLIST)
-    console.log("ROLELIST IS PRO: ", ROLELIST)
-    console.log("TEAMLIST IS PRO: ", TEAMLIST)
 
     setFetched({
       USERLIST: USERLIST,
@@ -122,31 +115,40 @@ function getComparator(order, orderBy) {
     : (a, b) => -descendingComparator(a, b, orderBy);
 }
 
-function applySortFilter(array, comparator, query) {
-  const stabilizedThis = array.map((el, index) => [el, index]);
+function applySortFilter(usersList, comparator, query) {
+
+  const stabilizedThis = usersList.map((user, index) => [user, index]);
+
+  console.log("Stabilized : ", stabilizedThis)
+
   stabilizedThis.sort((a, b) => {
+    
+  console.log("Stabilized A: ", a[0])
+  console.log("Stabilized B: ", b[0])
+
     const order = comparator(a[0], b[0]);
     if (order !== 0) return order;
     return a[1] - b[1];
   });
+
   if (query) {
-    return filter(array, (users) => users.fullName.toLowerCase().indexOf(query.toLowerCase()) !== -1);
+    return filter(usersList, (users) => users.fullName.toLowerCase().indexOf(query.toLowerCase()) !== -1);
   }
+  
   return stabilizedThis.map((el) => el[0]);
 }
 
-export default function User({ token }) {
+export default function User() {
 
-
-  const [errorAlert, setErrorAlert] = useState({
-    displayError: "none",
-    errorMessage: "",
+  const [error, setError] = useState({
+    display: "none",
+    message: "",
   });
 
-  const [successAlert, setSuccessAlert] = useState({
-    displaySuccess: "none",
-    successMessage: "",
-    fullName: ","
+  const [success, setSuccess] = useState({
+    display: "none",
+    message: "",
+    data: ","
   });
 
   const [fetchedData, setFetched] = useState({
@@ -156,13 +158,17 @@ export default function User({ token }) {
     IS_FETCHED: false
   });
 
+  const [dialog, setDialogOpen] = useState({ 
+    isOpen: false, 
+    openedBy: "" 
+  });
+  
   const [loading, setLoading] = useState(false);
   const [id, setId] = useState("");
   const [page, setPage] = useState(0);
-  const [dialog, setOpenDialogue] = useState({ isDialogOpen: false, openedBy: "" });
   const [order, setOrder] = useState('asc');
   const [selected, setSelected] = useState([]);
-  const [orderBy, setOrderBy] = useState('name');
+  const [orderBy, setOrderBy] = useState('fullname');
   const [filterName, setFilterName] = useState('');
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
@@ -215,13 +221,13 @@ export default function User({ token }) {
   };
 
   const onCreateUserButtonClick = () => {
-    setOpenDialogue({ isDialogOpen: true, openedBy: "CREATE_USER" });
+    setDialogOpen({ isOpen: true, openedBy: "CREATE_USER" });
   }
 
   const onSettingIconClick = (id) => {
     console.log("The id is : ", id)
     setId(id)
-    setOpenDialogue({ isDialogOpen: true, openedBy: "USER_SETTING"  });
+    setDialogOpen({ isOpen: true, openedBy: "USER_SETTING"  });
   }
 
   const createUser = (userData) => {
@@ -230,39 +236,39 @@ export default function User({ token }) {
 
     if (checkEmptyAndUndefined(fullName)) {
 
-      setErrorAlert({ displayError: "show", errorMessage: "Fullname Can Not Be Empty!" })
+      setError({ display: "show", message: "Fullname Can Not Be Empty!" })
       return
     }
 
     if (checkEmptyAndUndefined(userName)) {
 
-      setErrorAlert({ displayError: "show", errorMessage: "Username Can Not Be Empty!" })
+      setError({ display: "show", message: "Username Can Not Be Empty!" })
       return
     }
     if (checkEmptyAndUndefined(password)) {
 
-      setErrorAlert({ displayError: "show", errorMessage: "You Must Provide Password" })
+      setError({ display: "show", message: "You Must Provide Password" })
       return
     }
     if (checkEmptyAndUndefined(confirmPass)) {
 
-      setErrorAlert({ displayError: "show", errorMessage: "You Must Confirm Password" })
+      setError({ display: "show", message: "You Must Confirm Password" })
       return
     }
     if (!checkFieldMatch(password, confirmPass)) {
 
-      setErrorAlert({ displayError: "show", errorMessage: "Passwords Don't Match" })
+      setError({ display: "show", message: "Passwords Don't Match" })
       return
     }
 
     setLoading(true)
-    setErrorAlert({ displayError: "none" })
+    setError({ display: "none" })
 
     postDataTo('/user', userData).then(function (response) {
       setLoading(false)
-      setOpenDialogue(false)
+      setDialogOpen(false)
       console.log("Respose from user creation : ", response)
-      setSuccessAlert({displaySuccess: "show", successMessage: "User Created", fullName: response.data.result.fullName})
+      setSuccess({display: "show", message: "User Created", data: response.data.result.fullName})
       setFetched(previousState => {
         return {
           ...previousState,
@@ -271,9 +277,9 @@ export default function User({ token }) {
       })
     }).catch(function (err) {
       setLoading(false)
-      setErrorAlert({
-        displayError: "show",
-        errorMessage: err.response.data.error
+      setError({
+        display: "show",
+        message: err.response.data.error
       })
     })
   }
@@ -287,32 +293,32 @@ export default function User({ token }) {
 
     if (checkEmptyAndUndefined(password)) {
 
-      setErrorAlert({ displayError: "show", errorMessage: "You Must Provide Password" })
+      setError({ display: "show", message: "You Must Provide Password" })
       return
     }
     if (checkEmptyAndUndefined(confirmPass)) {
 
-      setErrorAlert({ displayError: "show", errorMessage: "You Must Confirm Password" })
+      setError({ display: "show", message: "You Must Confirm Password" })
       return
     }
     if (!checkFieldMatch(password, confirmPass)) {
 
-      setErrorAlert({ displayError: "show", errorMessage: "Passwords Don't Match" })
+      setError({ display: "show", message: "Passwords Don't Match" })
       return
     }
 
     setLoading(true)
-    setErrorAlert({ displayError: "none" })
+    setError({ display: "none" })
 
     postDataTo('/user/' + id + '/reset', userData).then(response => {
       setLoading(false)
-      setOpenDialogue(false)
+      setDialogOpen(false)
       console.log(response)
-    }).catch(error => {
+    }).catch(err => {
       setLoading(false)
-      setErrorAlert({
-        displayError: "show",
-        errorMessage: error.response.data.error
+      setError({
+        display: "show",
+        message: err.response.data.error
       })
     })
   }
@@ -323,13 +329,13 @@ export default function User({ token }) {
 
     postDataTo('/user/' + id + '/deactivate').then(response => {
       setLoading(false)
-      setOpenDialogue(false)
+      setDialogOpen(false)
       console.log(response)
-    }).catch(error => {
+    }).catch(err => {
       setLoading(false)
-      setErrorAlert({
-        displayError: "show",
-        errorMessage: error.response.data.error
+      setError({
+        display: "show",
+        message: err.response.data.error
       })
     })
 
@@ -341,31 +347,31 @@ export default function User({ token }) {
 
     if (checkEmptyAndUndefined(fullName)) {
 
-      setErrorAlert({ displayError: "show", errorMessage: "You Must Provide Fullname!" })
+      setError({ display: "show", message: "You Must Provide Fullname!" })
       return
     }
 
     if (checkEmptyAndUndefined(role)) {
 
-      setErrorAlert({ displayError: "show", errorMessage: "You Must Provide Role!" })
+      setError({ display: "show", message: "You Must Provide Role!" })
       return
     }
 
     if (checkEmptyAndUndefined(team)) {
 
-      setErrorAlert({ displayError: "show", errorMessage: "You Must Provide Team!" })
+      setError({ display: "show", message: "You Must Provide Team!" })
       return
     }
 
     postDataTo('/user/' + id + '/edit', userData).then(response => {
       setLoading(false)
-      setOpenDialogue(false)
+      setDialogOpen(false)
       console.log(response)
-    }).catch(error => { 
+    }).catch(err => { 
       setLoading(false)
-      setErrorAlert({
-        displayError: "show",
-        errorMessage: error.response.data.error
+      setError({
+        display: "show",
+        message: err.response.data.error
       })
     })
 
@@ -420,17 +426,17 @@ export default function User({ token }) {
         <title>Manage Users</title>
       </Helmet>
       <CustomDialog
-        data= {fetchedData}
-        alert={errorAlert}
+        data={fetchedData}
+        alert={error}
         loading={loading}
         onSubmit={handleSubmit}
         dialogueOpened={dialog} 
-        setOpen={setOpenDialogue}
+        setOpen={setDialogOpen}
       />
       <Stack direction="row" fullWidth alignItems="center" justifyContent="right" mb={3} >
-        <Alert variant="filled" onClose={() => {setSuccessAlert({displaySuccess: "none"})}} sx={{ display: successAlert.displaySuccess }} severity="success">
-          <AlertTitle>{successAlert.successMessage} Successfuly</AlertTitle>
-          {successAlert.fullName}
+        <Alert variant="filled" onClose={() => {setSuccess({display: "none"})}} sx={{ display: success.display }} severity="success">
+          <AlertTitle>{success.message} Successfuly</AlertTitle>
+          {success.data}
         </Alert>
       </Stack>
       <Stack direction="row" alignItems="center" justifyContent="space-between" mb={3}>

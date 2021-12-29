@@ -55,15 +55,18 @@ export default function SignIn({setToken}) {
       setLoading(false)
       if (response.data.status) {
 
+        console.log("The Response Login is awww : ", response.config.data.userName)
+        const userName = response.config.data.userName
         setToken(response.data.result)
-        navigate("/home")
+        navigate("/home",{state: userName})
       } else {
-
+        console.log("The error in login ", response.data.error)
         updateError("show", response.data.error)
       }
     }).catch(function (err) {
 
       setLoading(false)
+      console.log("The error in login catch : ", err)
       updateError("show", err.response)
     })
   }
