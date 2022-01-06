@@ -1,6 +1,11 @@
 import homeFill from '@iconify/icons-eva/home-fill';
 import personFill from '@iconify/icons-eva/person-fill';
 import settings2Fill from '@iconify/icons-eva/settings-2-fill';
+import bug from '@iconify/icons-ant-design/bug-filled';
+import accountBook from '@iconify/icons-ant-design/account-book-filled';
+import audio from '@iconify/icons-ant-design/audio-filled';
+import book from '@iconify/icons-ant-design/book-filled';
+import experiment from '@iconify/icons-ant-design/experiment-filled';
 
 const CONSTANTS = {
 
@@ -101,6 +106,17 @@ const CONSTANTS = {
         { id: 'status', label: 'Status', align: "left" },
         { id: 'setting', label: 'Settings', align: "right" },
       ],
+
+      DASHBOARD_CARD_DATA: [
+        {id: "total", lable: "Total", amount: 256, icon: homeFill },
+        {id: "piri", lable: "Paid - Installed - Reciept Issued", amount: 15, icon: personFill },
+        {id: "pinr", lable: "Paid - Installed - No Reciept", amount: 12, icon: settings2Fill },
+        {id: "pniri", lable: "Paid - Not Installed - Reciept Issued", amount: 3, icon: bug },
+        {id: "pninr", lable: "Paid - Not Installed - No Reciept", amount: 8, icon: accountBook },
+        {id: "npinr", lable: "Not Paid - Installed - No Reciept", amount: 18, icon: audio },
+        {id: "npir", lable: "Not Paid - Installed - Reciept", amount: 9, icon: book },
+        {id: "npnir", lable: "Not Paid - Not Installed - Reciept", amount: 21, icon: experiment },
+      ]
 }
 
 export default CONSTANTS

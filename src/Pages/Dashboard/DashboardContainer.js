@@ -3,6 +3,8 @@ import DashboardCard from "./DashboardCard";
 import Typography from "@mui/material/Typography";
 import PieChart from "./PieChart";
 import LineGraph from "./LineGraph";
+import Installed from './Components/Installed';
+import CONSTANTS from '../../Helpers/Constants';
 
 export default function Dashboard() {
   return (
@@ -22,57 +24,16 @@ export default function Dashboard() {
           DASHBOARD
         </Typography>
         <Container>
-          <Grid container spacing={2} sx={{ display: "flex" }}>
-            <Grid item lg={2}>
-              <DashboardCard 
-                name="Total" 
-                number="257" />
+          <Grid container mb={4} spacing={2}>
+          {CONSTANTS.DASHBOARD_CARD_DATA.map(data => {
+            return (
+              <Grid item xs={12} sm={6} md={3}>
+                <DashboardCard lable={data.lable} icon={data.icon} amount={data.amount} />
+              </Grid>
+            );
+          })}
+            
             </Grid>
-            <Grid item xl={3}>
-              <DashboardCard
-                name="Paid - Installed - Reciept Issued"
-                number="23"
-              />
-            </Grid>
-            <Grid item xl={3}>
-              <DashboardCard 
-                name="Paid - Installed - No Reciept" 
-                number="32" />
-            </Grid>
-            <Grid item xl={4}>
-              <DashboardCard
-                name="Paid - Not Installed - Reciept Issued"
-                number="17"
-              />
-            </Grid>
-          </Grid>
-        </Container>
-        <Container>
-          <Grid container spacing={1} sx={{ display: "flex" }}>
-            <Grid item lg={3}>
-              <DashboardCard
-                name="Paid - Not Installed - No Reciept"
-                number="21"
-              />
-            </Grid>
-            <Grid item xl={3}>
-              <DashboardCard
-                name="Not Paid - Installed - No Reciept"
-                number="6"
-              />
-            </Grid>
-            <Grid item xl={3}>
-              <DashboardCard 
-                name="Not Paid - Installed - Reciept" 
-                number="8" />
-            </Grid>
-            <Grid item xl={3}>
-              <DashboardCard
-                name="Not Paid - Not Installed - Reciept"
-                number="0"
-              />
-            </Grid>
-          </Grid>
         </Container>
         <Container>
           <Grid container spacing={3}>
