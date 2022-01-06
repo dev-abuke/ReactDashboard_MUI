@@ -1,7 +1,7 @@
 import './App.css';
 import AuthRoute from './AuthRoute';
 import Home from "./Pages/Home/Home";
-import Login from './Pages/Login/Logic/LoginLogic';
+import Login from './Pages/Login/Login';
 import User from "./Pages/User/ManageUsers";
 import Team from "./Pages/Team/ManageTeam";
 import Role from "./Pages/Role/ManageRole";

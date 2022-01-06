@@ -10,7 +10,7 @@ import Container from "@mui/material/Container";
 import Alert from "@mui/material/Alert";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { Helmet } from "react-helmet";
-import Copyright from "./Copyright";
+import CopyRight from "./Copyright";
 
 export default function LoginUI({ loading, error, handleSubmit }) {
   
@@ -84,7 +84,7 @@ export default function LoginUI({ loading, error, handleSubmit }) {
               </LoadingButton>
             </Box>
           </Box>
-          <Copyright sx={{ mt: 3, mb: 4 }} />
+          <CopyRight sx={{ mt: 3, mb: 4 }} />
 
           <Typography
             sx={{ fontSize: 12 }}

@@ -1,6 +1,6 @@
 import Typography from "@mui/material/Typography";
 import Link from "@mui/material/Link";
-import CONSTANTS from "../../../Helpers/Constants";
+import CONSTANTS from "../../Helpers/Constants";
 
 export default function Copyright(props) {
     return (

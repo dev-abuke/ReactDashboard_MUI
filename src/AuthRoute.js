@@ -27,6 +27,7 @@ function PrivateRoute({ children }) {
   }catch(error) {
     return (<Navigate to="/" />);
   }
+  console.log("In Auth Route : The Children is : ", children)
   return children
 }
 export default PrivateRoute;

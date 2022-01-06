@@ -23,7 +23,7 @@ function Home(props) {
   return (
     <div>
       <Helmet>
-        <title>Dashboard</title>
+        <title>Home</title>
       </Helmet>
       <DashboardTopNavBar />
       <ResponsiveDrawer />

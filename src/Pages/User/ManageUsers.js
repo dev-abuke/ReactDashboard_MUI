@@ -3,6 +3,7 @@ import { useState } from 'react';
 import ValidationRules from '../../Helpers/DataValidators'
 import DataRequester from '../../Helpers/DataRequester'
 import CONSTANTS from '../../Helpers/Constants';
+
 import Management from '../Management';
 import CreateUser from "./CreateUser";
 import EditUser from "./EditUser";
@@ -266,7 +267,10 @@ export default function User() {
   const deactivateUser = (selectedUser) => {
 
     //setLoading(true)
-const id = selectedUser === null || selectedUser === undefined ? dialog.selectedUser.id : selectedUser.id 
+    const id =
+      selectedUser === null || selectedUser === undefined
+        ? dialog.selectedUser.id
+        : selectedUser.id; 
 
     postDataTo(`/user/${id}/deactivate`).then(response => {
 

@@ -1,9 +1,38 @@
+import jwt from "jsonwebtoken";
+import { capitalCase } from "change-case";
+
 export default function ValidationRules() {
 
   const checkEmpty = (field) => {
 
     if (field === "") return true;
     return false;
+  };
+
+  const getUserDataFromToken = (token) => {
+
+    var tokenValue = token.split(" ")[1];
+  
+    if (!tokenValue) {
+      throw new Error("Invalid token");
+    }
+    var userData = jwt.decode(tokenValue);
+  
+    if (userData == null) {
+      throw new Error("Unauthorized");
+    }
+    return userData.data;
+  };
+
+  const validateData = (data) => {
+  
+    for (let property in data) {
+  
+      if (checkEmptyAndUndefined(data[property])) {
+  
+        throw new Error(`${capitalCase(property)} Can Not be Empty`);
+      }
+    }
   };
 
   const checkEmptyAndUndefined = (field) => {
@@ -114,6 +143,8 @@ export default function ValidationRules() {
     checkUndefined,
     getDataFromForm,
     isArray,
+    validateData,
+    getUserDataFromToken,
     checkEmptyAndUndefined,
     checkFieldMatch,
     isNumber,

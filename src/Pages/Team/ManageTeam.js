@@ -1,8 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-// material
-
 // components
 import ValidationRules from "../../Helpers/DataValidators";
 import DataRequester from "../../Helpers/DataRequester";
