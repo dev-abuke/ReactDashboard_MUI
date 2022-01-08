@@ -8,6 +8,7 @@ import CONSTANTS from "../../Helpers/Constants";
 //Components
 import Management from "../Management";
 import CreateRole from './CreateRole';
+import MenuOptions from "../MenuOptions";
 
 const { checkEmptyAndUndefined, getDataFromForm } = ValidationRules();
 const { postDataTo, getDataFrom } = DataRequester();
@@ -51,6 +52,11 @@ export default function ManageRole() {
     data: "",
   });
 
+  const [menu] = useState({
+    options: CONSTANTS.ROLE_MENU_OPTIONS,
+    ui: MenuOptions,
+  });
+
   const [role, setRole] = useState({
     ROLELIST: [],
     IS_FETCHED: false,
@@ -60,6 +66,7 @@ export default function ManageRole() {
     isOpen: false,
     title: "",
     EventType: "",
+    Content: "",
     errorDisplay: "none",
     errorMessage: "",
   });
@@ -94,12 +101,23 @@ export default function ManageRole() {
     : getRoles(setRole);
 
   const onCreateRoleButtonClick = () => {
-    updateDialogState({ isOpen: true, title: CONSTANTS.CREATE_ROLE_TITLE });
+    updateDialogState({ isOpen: true, Content: CreateRole, title: CONSTANTS.CREATE_ROLE_TITLE });
   };
 
-  const onSettingIconClick = (id) => {
-    console.log("The id is : ", id);
-    updateDialogState({ isOpen: true, title: CONSTANTS.CREATE_ROLE_TITLE });
+  const onRoleMenuClick = (setOpen, row, eventType) => {
+
+    setOpen(false)
+
+    switch(eventType){
+      case CONSTANTS.DELETE_ROLE_MENU_CLICK:
+        console.log("DELETE_ROLE_MENU_CLICK :", row)
+        break;
+      case CONSTANTS.EDIT_ROLE_MENU_CLICK:
+        console.log("EDIT_ROLE_MENU_CLICK :", row)
+        break;
+      default:
+        console.log("DEFAULT MANAGE ROLE EVENT NAME :", eventType)
+    }
   };
 
   const createRole = (roleData) => {
@@ -127,6 +145,11 @@ export default function ManageRole() {
         setLoading(false);
         updateDialogState({isOpen: false});
         console.log("Respose from role creation : ", response);
+        setTimeout(() => {
+          updateSuccessAlertState({
+            display: "none",
+          });
+        }, 9000)
         updateSuccessAlertState({
           display: "show",
           message: "Role Created Successfuly",
@@ -171,7 +194,7 @@ export default function ManageRole() {
   return (
     <Management
       handleCreateButtonClick={onCreateRoleButtonClick}
-      handleSettingIconClick={onSettingIconClick}
+      handleMenuClick={onRoleMenuClick}
       handleDialogClose={onCloseDialog}
       handleSuccessAlertClose={onCloseSuccessResult}
       handleSubmit={onSubmit}
@@ -180,6 +203,7 @@ export default function ManageRole() {
       pageName={CONSTANTS.ROLE_PAGE_NAME}
       fetchedData={role.ROLELIST}
       dialog={dialog}
+      menu={menu}
       loading={loading}
       success={success}
     />

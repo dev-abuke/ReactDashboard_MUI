@@ -1,9 +1,8 @@
 import { Box, Container, Grid } from "@mui/material";
-import DashboardCard from "./DashboardCard";
+import DashboardCard from "./Components/DashboardCard";
 import Typography from "@mui/material/Typography";
-import PieChart from "./PieChart";
-import LineGraph from "./LineGraph";
-import Installed from './Components/Installed';
+import PieChart from "./Components/PieChart";
+import LineGraph from "./Components/LineGraph";
 import CONSTANTS from '../../Helpers/Constants';
 
 export default function Dashboard() {

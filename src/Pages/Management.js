@@ -23,9 +23,10 @@ import {
 
 //Components
 import SearchNotFound from "../Components/NotFound/SearchNotFound";
-import { UserListHead, UserListToolbar } from "./User/index";
+import TableHead from './TableHead';
+import TableToolbar from "./TableToolbar";
 import Label from '../Components/Label';
-import MoreMenu from './User/UserMoreMenu'
+import MoreMenu from './MoreMenu';
 
 //{import CONSTANTS from "../Helpers/Constants";}
 
@@ -189,7 +190,7 @@ export default function Management(props) {
       </Stack>
 
       <Card sx={{ mb: 5, boxShadow: 4, borderRadius: 5 }}>
-        <UserListToolbar
+        <TableToolbar
           numSelected={selected.length}
           filterName={filterName}
           onFilterName={handleFilterByName}
@@ -198,7 +199,7 @@ export default function Management(props) {
         {/* <Scrollbar> */}
         <TableContainer sx={{ minWidth: 800 }}>
           <Table>
-            <UserListHead
+            <TableHead
               order={order}
               orderBy={orderBy}
               headLabel={TABLE_HEAD}

@@ -1,17 +1,20 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-// components
+import CONSTANTS from "../../Helpers/Constants";
+
 import ValidationRules from "../../Helpers/DataValidators";
 import DataRequester from "../../Helpers/DataRequester";
-import CONSTANTS from "../../Helpers/Constants";
+
+// components
 import Management from "../Management";
 import CreateTeam from "./CreateTeam";
+import MenuOptions from "../MenuOptions";
 
-const {
-  checkEmptyAndUndefined,  
+const { 
   getDataFromForm,
-  cleanTeamData 
+  cleanTeamData,
+  validateData,
 
 } = ValidationRules()
 
@@ -34,7 +37,6 @@ function getTeams(setFetched, navigate) {
       });
     })
     .catch((error) => {
-      console.log("Error getting data : ", error.response.data.error);
       if (error.response.data.error === "Not Authorized") navigate("/");
     });
 }
@@ -51,6 +53,11 @@ export default function ManageTeams() {
     data: "",
   });
 
+  const [menu] = useState({
+    options: CONSTANTS.TEAM_MENU_OPTIONS,
+    ui: MenuOptions,
+  });
+
   const [team, setTeam] = useState({
     TEAMLIST: [],
     IS_FETCHED: false,
@@ -59,6 +66,7 @@ export default function ManageTeams() {
   const [dialog, setDialog] = useState({
     isOpen: false,
     title: "",
+    Content: CreateTeam,
     EventType: "",
     errorDisplay: "none",
     errorMessage: "",
@@ -89,17 +97,27 @@ export default function ManageTeams() {
   const onCreateTeamButtonClick = () => {
 
     updateDialogState({
+      Content: CreateTeam,
       isOpen: true,
       title: CONSTANTS.CREATE_TEAM_TITLE,
     });
   };
 
-  const onSettingIconClick = (row) => {
+  const onTeamMenuClick = (setOpen, row, eventType) => {
 
-    updateDialogState({
-      isOpen: true,
-      title: CONSTANTS.TEAM_SETTING_TITLE,
-    });
+    setOpen(false)
+
+    switch(eventType){
+      case CONSTANTS.DELETE_TEAM_MENU_CLICK:
+        console.log("DELETE_TEAM_MENU_CLICK :", row)
+        break;
+      case CONSTANTS.EDIT_TEAM_MENU_CLICK: 
+        console.log("EDIT_TEAM_MENU_CLICK :", row)
+        break;
+      default:
+        console.log("DEFAULT MANAGE TEAMS EVENT NAME :", eventType)
+        
+    }
   };
 
   team.IS_FETCHED
@@ -112,13 +130,14 @@ export default function ManageTeams() {
       name: teamData.team,
     };
 
-    if (checkEmptyAndUndefined(newTeam.name)) {
-
+    try{
+      validateData({teamName: newTeam.name})
+    }catch(err){
       updateDialogState({
         errorDisplay: "show",
-        errorMessage: "Team Name Can't Be Empty!",
+        errorMessage: err.message,
       });
-      return;
+      return
     }
 
     setLoading(true);
@@ -140,6 +159,11 @@ export default function ManageTeams() {
             IS_FETCHED: false,
           };
         });
+        setTimeout(() => {
+          updateSuccessAlertState({
+            display: "none",
+          });
+        }, 15000)
       })
       .catch(function (err) {
         setLoading(false);
@@ -171,15 +195,15 @@ export default function ManageTeams() {
   return (
     <Management
       handleCreateButtonClick={onCreateTeamButtonClick}
-      handleSettingIconClick={onSettingIconClick}
+      handleMenuClick={onTeamMenuClick}
       handleDialogClose={onCloseDialog}
       handleSuccessAlertClose={onCloseSuccessResult}
       handleSubmit={onSubmit}
-      Content={CreateTeam}
       TABLE_HEAD={CONSTANTS.TEAMS_TABLE_HEAD}
       pageName={CONSTANTS.TEAM_PAGE_NAME}
       fetchedData={team.TEAMLIST}
       dialog={dialog}
+      menu={menu}
       loading={loading}
       success={success}
     />

@@ -10,10 +10,11 @@ import { MHidden } from '../@material-extend';
 import Searchbar from './Searchbar';
 import AccountPopover from './AccountPopover';
 import NotificationsPopover from './NotificationsPopover';
+import CONSTANTS from '../../../Helpers/Constants'
 
 // ----------------------------------------------------------------------
 
-const DRAWER_WIDTH = 200;
+const DRAWER_WIDTH = CONSTANTS.DRAWER_WIDTH;
 const APPBAR_MOBILE = 64;
 const APPBAR_DESKTOP = 60;
 
@@ -21,9 +22,9 @@ const RootStyle = styled(AppBar)(({ theme }) => ({
   boxShadow: 8,
   backdropFilter: 'blur(6px)',
   WebkitBackdropFilter: 'blur(6px)', // Fix on Mobile
-  backgroundColor: alpha("#F2F2F2", 0.95),
+  backgroundColor: alpha("#F2F2F2", 0.25),
   [theme.breakpoints.up('lg')]: {
-    width: `calc(100% - ${DRAWER_WIDTH + 1}px)`
+    width: `calc(100% - ${DRAWER_WIDTH}px)`
   }
 }));
 

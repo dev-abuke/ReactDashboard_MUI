@@ -5,7 +5,7 @@ import Login from './Pages/Login/Login';
 import User from "./Pages/User/ManageUsers";
 import Team from "./Pages/Team/ManageTeam";
 import Role from "./Pages/Role/ManageRole";
-import Dashboard from "./Pages/Dashboard/DashboardContainer.js";
+import Dashboard from "./Pages/Dashboard/Dashboard";
 import PageNotFound from "./Components/NotFound/PageNotFound";
 import ThemeConfig from './theme';
 import {

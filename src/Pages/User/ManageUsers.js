@@ -8,6 +8,8 @@ import Management from '../Management';
 import CreateUser from "./CreateUser";
 import EditUser from "./EditUser";
 import ResetUser from "./ResetUser";
+//Components
+import UserMenuOptions from './UserMenuOptions'
 
 const {
   checkEmptyAndUndefined, 
@@ -33,6 +35,11 @@ export default function User() {
     display: "none",
     message: "",
     data: ","
+  });
+
+  const [menu] = useState({
+    options: CONSTANTS.USER_MENU_OPTIONS,
+    ui: UserMenuOptions,
   });
 
   const [fetchedData, setFetched] = useState({
@@ -123,35 +130,36 @@ export default function User() {
     });
   };
 
-  //TODO
-  const onResetPasswordMenuClick = (setMenuOpen, selectedUser) => {
+  const onMenuClick = (setMenuOpen, selectedUser, eventType) => {
 
     setMenuOpen(false)
-    updateDialogState({
-      isOpen: true,
-      title: "RESET PASSWORD",
-      Content: ResetUser,
-      selectedUser: selectedUser,
-    });
-  }
-
-  //TODO
-  const onEditUserMenuClick = (setMenuOpen, selectedUser) => {
-
-    setMenuOpen(false);
-    updateDialogState({
-      isOpen: true,
-      title: "EDIT USER",
-      Content: EditUser,
-      selectedUser: selectedUser,
-    });
-  }
-
-  //TODO
-  const onDeactivateMenuClick = (setMenuOpen, selectedUser) => {
-    console.log("User to be deactivated is : ", selectedUser)
-    setMenuOpen(false)
-    deactivateUser(selectedUser) 
+    
+    switch(eventType){
+      case CONSTANTS.DEACTIVATE_USER_MENU_CLICK:
+        console.log("DEACTIVATE_USER_MENU_CLICK :", selectedUser)
+        deactivateUser(selectedUser) 
+        break;
+      case CONSTANTS.EDIT_USER_MENU_CLICK: 
+        console.log("EDIT_USER_MENU_CLICK :", selectedUser)
+        updateDialogState({
+          isOpen: true,
+          title: "EDIT USER",
+          Content: EditUser,
+          selectedUser: selectedUser,
+        });
+        break;
+      case CONSTANTS.RESET_PASSWORD_MENU_CLICK: 
+        console.log("RESET_PASSWORD_MENU_CLICK :", selectedUser) 
+        updateDialogState({
+          isOpen: true,
+          title: "RESET PASSWORD",
+          Content: ResetUser,
+          selectedUser: selectedUser,
+        });
+        break;
+      default:
+        console.log("DEFAULT MANAGE USERS")
+    }
   }
 
   const onCloseDialog = () => {
@@ -372,19 +380,17 @@ export default function User() {
 
     }
   }
-
   return (
     <Management
       handleCreateButtonClick={onCreateUserButtonClick}
-      handleDeactivateMenuClick={onDeactivateMenuClick}
-      handleEditMenuClick={onEditUserMenuClick}
-      handleResetPasswordMenuClick={onResetPasswordMenuClick}
+      handleMenuClick={onMenuClick}
       handleDialogClose={onCloseDialog}
       handleSuccessAlertClose={onCloseSuccessResult}
       handleSubmit={onSubmit}
       TABLE_HEAD={CONSTANTS.USERS_TABLE_HEAD}
       pageName={CONSTANTS.USER_PAGE_TITLE}
       fetchedData={fetchedData.userList}
+      menu={menu}
       dialog={dialog}
       success={success}
     />
