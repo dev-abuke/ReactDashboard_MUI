@@ -7,14 +7,13 @@ import CONSTANTS from "../../Helpers/Constants";
 
 //Components
 import Management from "../Management";
-import CreateRole from './CreateRole';
+import CreateRole from "./CreateRole";
 import MenuOptions from "../MenuOptions";
 
 const { checkEmptyAndUndefined, getDataFromForm } = ValidationRules();
 const { postDataTo, getDataFrom } = DataRequester();
 
 function cleanRoleData(roleList) {
-
   return roleList.map((role) => {
     return {
       id: role.id,
@@ -45,7 +44,6 @@ function getRoles(setFetched) {
 }
 
 export default function ManageRole() {
-
   const [success, setSuccess] = useState({
     display: "none",
     message: "",
@@ -74,9 +72,7 @@ export default function ManageRole() {
   const [loading, setLoading] = useState(false);
 
   const updateSuccessAlertState = (newstate) => {
-
     setSuccess((previousState) => {
-
       return {
         ...previousState,
         ...newstate,
@@ -85,9 +81,7 @@ export default function ManageRole() {
   };
 
   const updateDialogState = (newstate) => {
-
     setDialog((previousState) => {
-
       return {
         ...previousState,
         ...newstate,
@@ -96,44 +90,73 @@ export default function ManageRole() {
   };
 
   //Check if roles are fetched from server if not fetch them
-  role.IS_FETCHED
-    ? console.log("Role Already fetched")
-    : getRoles(setRole);
+  role.IS_FETCHED ? console.log("Role Already fetched") : getRoles(setRole);
 
   const onCreateRoleButtonClick = () => {
-    updateDialogState({ isOpen: true, Content: CreateRole, title: CONSTANTS.CREATE_ROLE_TITLE });
+    updateDialogState({
+      isOpen: true,
+      Content: CreateRole,
+      title: CONSTANTS.CREATE_ROLE_TITLE,
+    });
   };
 
-  const onRoleMenuClick = (setOpen, row, eventType) => {
+  const onRoleMenuClick = (setOpen, roleItem, eventType) => {
+    setOpen(false);
 
-    setOpen(false)
-
-    switch(eventType){
+    switch (eventType) {
       case CONSTANTS.DELETE_ROLE_MENU_CLICK:
-        console.log("DELETE_ROLE_MENU_CLICK :", row)
+        console.log("DELETE_ROLE_MENU_CLICK :", roleItem);
+        deleteRole(roleItem);
         break;
       case CONSTANTS.EDIT_ROLE_MENU_CLICK:
-        console.log("EDIT_ROLE_MENU_CLICK :", row)
+        console.log("EDIT_ROLE_MENU_CLICK :", roleItem);
         break;
       default:
-        console.log("DEFAULT MANAGE ROLE EVENT NAME :", eventType)
+        console.log("DEFAULT MANAGE ROLE EVENT NAME :", eventType);
     }
   };
 
-  const createRole = (roleData) => {
+  const deleteRole = (roleItem) => {
+    
+    postDataTo(`/role/${roleItem.id}/delete`)
+      .then((response) => {
+        console.log("RESPONSE FROM ROLE DELETION :", response);
+        updateSuccessAlertState({
+          display: "show",
+          message: "Role Deleted Successfuly",
+          data: response.data.result.roleName,
+        });
+        setRole((previousState) => {
+          return {
+            ...previousState,
+            IS_FETCHED: false,
+          };
+        });
+      })
+      .catch(function (err) {
+        console.log("ERROR IN ROLE DELETION : ", err);
+      });
+  };
 
+  const createRole = (roleData) => {
     const newRole = {
       roleName: roleData.role,
       accessLevel: roleData.accessLevel,
     };
 
     if (checkEmptyAndUndefined(roleData.role)) {
-      updateDialogState({ errorDisplay: "show", errorMessage: "Role Name Can Not Be Empty!" });
+      updateDialogState({
+        errorDisplay: "show",
+        errorMessage: "Role Name Can Not Be Empty!",
+      });
       return;
     }
 
     if (checkEmptyAndUndefined(roleData.accessLevel)) {
-      updateDialogState({ errorDisplay: "show", errorMessage: "Access Level Can Not Be Empty!" });
+      updateDialogState({
+        errorDisplay: "show",
+        errorMessage: "Access Level Can Not Be Empty!",
+      });
       return;
     }
 
@@ -143,13 +166,13 @@ export default function ManageRole() {
     postDataTo("/role", newRole)
       .then((response) => {
         setLoading(false);
-        updateDialogState({isOpen: false});
+        updateDialogState({ isOpen: false });
         console.log("Respose from role creation : ", response);
         setTimeout(() => {
           updateSuccessAlertState({
             display: "none",
           });
-        }, 9000)
+        }, 9000);
         updateSuccessAlertState({
           display: "show",
           message: "Role Created Successfuly",
@@ -181,7 +204,6 @@ export default function ManageRole() {
   };
 
   const onSubmit = (event, EventType) => {
-
     event.preventDefault();
 
     const roleData = getDataFromForm(event.target);

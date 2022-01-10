@@ -4,15 +4,15 @@ import ValidationRules from '../../Helpers/DataValidators'
 import DataRequester from '../../Helpers/DataRequester'
 import CONSTANTS from '../../Helpers/Constants';
 
-import Management from '../Management';
-import CreateUser from "./CreateUser";
-import EditUser from "./EditUser";
-import ResetUser from "./ResetUser";
 //Components
 import UserMenuOptions from './UserMenuOptions'
+import Management from '../Management';
+import CreateUser from './CreateUser';
+import EditUser from "./EditUser";
+import ResetUser from "./ResetUser";
 
 const {
-  checkEmptyAndUndefined, 
+  validateData,
   checkFieldMatch, 
   getDataFromForm, 
   cleanUserData, 
@@ -118,9 +118,6 @@ export default function User() {
 
   fetchedData.isFetched ? console.log("Already fetched") : getAllData()
 
-  
-  console.log("The Updated After is: ", dialog)
-
   const onCreateUserButtonClick = () => {
 
     updateDialogState({
@@ -135,12 +132,12 @@ export default function User() {
     setMenuOpen(false)
     
     switch(eventType){
+
       case CONSTANTS.DEACTIVATE_USER_MENU_CLICK:
-        console.log("DEACTIVATE_USER_MENU_CLICK :", selectedUser)
         deactivateUser(selectedUser) 
         break;
-      case CONSTANTS.EDIT_USER_MENU_CLICK: 
-        console.log("EDIT_USER_MENU_CLICK :", selectedUser)
+
+      case CONSTANTS.EDIT_USER_MENU_CLICK:
         updateDialogState({
           isOpen: true,
           title: "EDIT USER",
@@ -148,8 +145,8 @@ export default function User() {
           selectedUser: selectedUser,
         });
         break;
-      case CONSTANTS.RESET_PASSWORD_MENU_CLICK: 
-        console.log("RESET_PASSWORD_MENU_CLICK :", selectedUser) 
+
+      case CONSTANTS.RESET_PASSWORD_MENU_CLICK:
         updateDialogState({
           isOpen: true,
           title: "RESET PASSWORD",
@@ -157,6 +154,7 @@ export default function User() {
           selectedUser: selectedUser,
         });
         break;
+
       default:
         console.log("DEFAULT MANAGE USERS")
     }
@@ -174,31 +172,19 @@ export default function User() {
 
     const { fullName, userName, password, confirmPass } = userData
 
-    if (checkEmptyAndUndefined(fullName)) {
+    try {
+      validateData({
+        fullName,
+        userName,
+        password,
+        confirmPassword: confirmPass,
+      });
 
-      updateDialogState({ errorDisplay: "show", errorMessage: "Fullname Can Not Be Empty!" })
-      return
-    }
-
-    if (checkEmptyAndUndefined(userName)) {
-
-      updateDialogState({ errorDisplay: "show", errorMessage: "Username Can Not Be Empty!" })
-      return
-    }
-    if (checkEmptyAndUndefined(password)) {
-
-      updateDialogState({ errorDisplay: "show", errorMessage: "You Must Provide Password" })
-      return
-    }
-    if (checkEmptyAndUndefined(confirmPass)) {
-
-      updateDialogState({ errorDisplay: "show", errorMessage: "You Must Confirm Password" })
-      return
-    }
-    if (!checkFieldMatch(password, confirmPass)) {
-
-      updateDialogState({ errorDisplay: "show", errorMessage: "Passwords Don't Match" })
-      return
+      if (!checkFieldMatch(password, confirmPass)) {
+        throw new Error(`Passwords Don't Match`);
+      }
+    } catch (err) {
+      updateDialogState({ errorDisplay: "show", errorMessage: err.message });
     }
 
     updateDialogState({
@@ -231,20 +217,17 @@ export default function User() {
 
     const { password, confirmPass } = userData
 
-    if (checkEmptyAndUndefined(password)) {
+    try {
+      validateData({
+        password,
+        confirmPassword: confirmPass,
+      });
 
-      updateDialogState({ errorDisplay: "show", errorMessage: "You Must Provide Password" })
-      return
-    }
-    if (checkEmptyAndUndefined(confirmPass)) {
-
-      updateDialogState({ errorDisplay: "show", errorMessage: "You Must Confirm Password" })
-      return
-    }
-    if (!checkFieldMatch(password, confirmPass)) {
-
-      updateDialogState({ errorDisplay: "show", errorMessage: "Passwords Don't Match" })
-      return
+      if (!checkFieldMatch(password, confirmPass)) {
+        throw new Error(`Passwords Don't Match`);
+      }
+    } catch (err) {
+      updateDialogState({ errorDisplay: "show", errorMessage: err.message });
     }
 
     updateDialogState({ 
@@ -310,22 +293,14 @@ export default function User() {
 
     const { fullName, role, team } = userData
 
-    if (checkEmptyAndUndefined(fullName)) {
-
-      updateDialogState({ errorDisplay: "show", errorMessage: "You Must Provide Fullname!" })
-      return
-    }
-
-    if (checkEmptyAndUndefined(role)) {
-
-      updateDialogState({ errorDisplay: "show", errorMessage: "You Must Provide Role!" })
-      return
-    }
-
-    if (checkEmptyAndUndefined(team)) {
-
-      updateDialogState({ errorDisplay: "show", errorMessage: "You Must Provide Team!" })
-      return
+    try {
+      validateData({
+        fullName,
+        role,
+        team,
+      });
+    } catch (err) {
+      updateDialogState({ errorDisplay: "show", errorMessage: err.message });
     }
 
     postDataTo(`/user/${dialog.selectedUser.id}/edit`, userData)
@@ -354,8 +329,6 @@ export default function User() {
     event.preventDefault();
     
     const userData = getDataFromForm(event.target)
-    
-    console.log("The Whole User Data : ", userData)
 
     switch (EventType) {
 
@@ -376,8 +349,7 @@ export default function User() {
         break;
 
       default:
-        console.log("The Type of event is from default : ", EventType)
-
+        console.log("The Type of event is from onSubmit : ", EventType)
     }
   }
   return (
