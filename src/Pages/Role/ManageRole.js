@@ -101,6 +101,7 @@ export default function ManageRole() {
   };
 
   const onRoleMenuClick = (setOpen, roleItem, eventType) => {
+    
     setOpen(false);
 
     switch (eventType) {
@@ -117,7 +118,7 @@ export default function ManageRole() {
   };
 
   const deleteRole = (roleItem) => {
-    
+
     postDataTo(`/role/${roleItem.id}/delete`)
       .then((response) => {
         console.log("RESPONSE FROM ROLE DELETION :", response);
